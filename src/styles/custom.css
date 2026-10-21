@@ -1,0 +1,16 @@
+/* Hazard-yellow accent, after HBM's warning signs. */
+:root {
+	--sl-color-accent-low: #3a3000;
+	--sl-color-accent: #d8b400;
+	--sl-color-accent-high: #ffe680;
+}
+:root[data-theme='light'] {
+	--sl-color-accent-low: #fff3b8;
+	--sl-color-accent: #8a6d00;
+	--sl-color-accent-high: #3d3000;
+}
+/* Wide reference tables scroll instead of squeezing. */
+.sl-markdown-content table {
+	display: block;
+	overflow-x: auto;
+}

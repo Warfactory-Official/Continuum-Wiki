@@ -1,0 +1,158 @@
+---
+// The page title plus an "Open in AI chat" menu that hands the page's Markdown copy to a chat service.
+import Default from '@astrojs/starlight/components/PageTitle.astro';
+import { AI_ICONS } from './ai-icons';
+
+// Each service's prefill URL; the prompt goes in the named query parameter.
+const PROVIDERS = [
+	{ id: 'chatgpt', label: 'ChatGPT', url: 'https://chatgpt.com/', param: 'prompt', extra: { hints: 'search' } },
+	{ id: 'claude', label: 'Claude', url: 'https://claude.ai/new', param: 'q' },
+	{ id: 'grok', label: 'Grok', url: 'https://grok.com/', param: 'q' },
+	{ id: 'cursor', label: 'Cursor', url: 'https://cursor.com/link/prompt', param: 'text' },
+	{ id: 'githubCopilot', label: 'GitHub Copilot', url: 'https://github.com/copilot', param: 'prompt' },
+	{ id: 'scira', label: 'Scira', url: 'https://scira.ai/', param: 'q' },
+];
+
+// scripts/markdown-pages.mjs serves every page as Markdown next to it: /x/y/ is also /x/y.md.
+const markdownPath = Astro.url.pathname.replace(/\/$/, '') + '.md';
+const markdownUrl = new URL(markdownPath, Astro.site).href;
+const prompt = `Read ${markdownUrl}, a page of the NTM - Continuum wiki (HBM's Nuclear Tech Mod for Minecraft). I want to ask questions about it.`;
+// encodeURIComponent, not URLSearchParams: Cursor's link parser does not read "+" as a space.
+const links = PROVIDERS.map((p) => {
+	const query = Object.entries({ [p.param]: prompt, ...p.extra })
+		.map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+		.join('&');
+	return { ...p, href: `${p.url}?${query}`, icon: AI_ICONS[p.id] };
+});
+---
+
+<Default />
+<details class="ai-menu">
+	<summary>
+		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			{AI_ICONS.sparkle.paths.map((d) => <path d={d} />)}
+		</svg>
+		Open in AI chat
+		<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+	</summary>
+	<ul>
+		{
+			links.map((l) => (
+				<li>
+					<a href={l.href} target="_blank" rel="noopener noreferrer">
+						<svg
+							viewBox={l.icon.viewBox}
+							fill={l.icon.fill ? 'currentColor' : 'none'}
+							stroke={l.icon.fill ? 'none' : 'currentColor'}
+							stroke-width="2"
+							aria-hidden="true"
+							set:html={l.icon.markup ?? l.icon.paths.map((d) => `<path d="${d}"/>`).join('')}
+						/>
+						{l.label}
+					</a>
+				</li>
+			))
+		}
+		<li class="separated">
+			<a href={markdownPath} target="_blank" rel="noopener">
+				<svg viewBox={AI_ICONS.markdown.viewBox} fill="currentColor" aria-hidden="true">
+					{AI_ICONS.markdown.paths.map((d) => <path d={d} />)}
+				</svg>
+				Open as Markdown
+			</a>
+		</li>
+	</ul>
+</details>
+
+<script>
+	// Close the menu on a click outside it or on Escape.
+	document.addEventListener('click', (e) => {
+		for (const menu of document.querySelectorAll<HTMLDetailsElement>('details.ai-menu[open]')) {
+			if (!menu.contains(e.target as Node)) menu.open = false;
+		}
+	});
+	document.addEventListener('keydown', (e) => {
+		if (e.key !== 'Escape') return;
+		for (const menu of document.querySelectorAll<HTMLDetailsElement>('details.ai-menu[open]')) menu.open = false;
+	});
+</script>
+
+<style>
+	.ai-menu {
+		position: relative;
+		display: inline-block;
+		margin-top: 0.75rem;
+		font-size: var(--sl-text-sm);
+	}
+	summary {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.3rem 0.7rem;
+		border: 1px solid var(--sl-color-gray-4);
+		border-radius: 0.4rem;
+		background: var(--sl-color-gray-6);
+		cursor: pointer;
+		list-style: none;
+		color: var(--sl-color-white);
+		font-weight: 600;
+		user-select: none;
+	}
+	summary::-webkit-details-marker {
+		display: none;
+	}
+	summary:hover,
+	.ai-menu[open] summary {
+		border-color: var(--sl-color-accent);
+		color: var(--sl-color-white);
+	}
+	summary svg {
+		width: 1rem;
+		height: 1rem;
+	}
+	.ai-menu[open] .chevron {
+		transform: rotate(180deg);
+	}
+	ul {
+		position: absolute;
+		z-index: 10;
+		top: calc(100% + 0.3rem);
+		left: 0;
+		min-width: 15rem;
+		margin: 0;
+		padding: 0.3rem;
+		list-style: none;
+		background: var(--sl-color-bg-nav);
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: 0.5rem;
+		box-shadow: var(--sl-shadow-md);
+	}
+	li {
+		margin: 0;
+	}
+	li.separated {
+		margin-top: 0.3rem;
+		padding-top: 0.3rem;
+		border-top: 1px solid var(--sl-color-gray-5);
+	}
+	a {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		padding: 0.35rem 0.5rem;
+		border-radius: 0.3rem;
+		color: var(--sl-color-gray-1);
+		text-decoration: none;
+	}
+	a:hover,
+	a:focus-visible {
+		background: var(--sl-color-accent-low);
+		color: var(--sl-color-accent-high);
+		outline: none;
+	}
+	a svg {
+		width: 1rem;
+		height: 1rem;
+		flex-shrink: 0;
+	}
+</style>

@@ -1,0 +1,137 @@
+---
+title: Your first datapack
+description: "A step-by-step datapack: add a Burner Press recipe, remove one of HBM's, and check that it loaded."
+sidebar:
+  order: 4
+---
+
+import { Steps, Tabs, TabItem, FileTree } from '@astrojs/starlight/components';
+
+This walkthrough builds a working datapack in five steps: it adds a Burner Press recipe that presses a gold block
+into a diamond (an obviously new result, so it is easy to spot) and removes one of HBM's press recipes. The same pack
+works on all six targets once the folder names match your Minecraft version.
+
+<Steps>
+
+1. **Make the pack folder.** Open your world's `datapacks` folder (`saves/<world>/datapacks`) and create a folder
+   named `my_hbm_pack`. Everything below goes inside it. Use your own namespace (`mypack` here) for your files, never
+   `hbm`.
+
+2. **Write `pack.mcmeta`.** The format number depends on the Minecraft version:
+
+   <Tabs syncKey="mc">
+   <TabItem label="26.1">
+   ```json title="pack.mcmeta"
+   {
+     "pack": {
+       "description": "My HBM tweaks",
+       "min_format": 101,
+       "max_format": 101
+     }
+   }
+   ```
+   </TabItem>
+   <TabItem label="1.21.1">
+   ```json title="pack.mcmeta"
+   {
+     "pack": {
+       "description": "My HBM tweaks",
+       "pack_format": 48
+     }
+   }
+   ```
+   </TabItem>
+   <TabItem label="1.20.1">
+   ```json title="pack.mcmeta"
+   {
+     "pack": {
+       "description": "My HBM tweaks",
+       "pack_format": 15
+     }
+   }
+   ```
+   </TabItem>
+   </Tabs>
+
+3. **Add the recipe.** Machine recipes live in a subfolder named after the machine's table, here `press`:
+
+   <Tabs syncKey="mc">
+   <TabItem label="26.1 and 1.21.1">
+   <FileTree>
+   - my_hbm_pack/
+     - pack.mcmeta
+     - data/
+       - mypack/
+         - recipe/
+           - press/
+             - diamond_from_gold.json
+   </FileTree>
+   </TabItem>
+   <TabItem label="1.20.1">
+   <FileTree>
+   - my_hbm_pack/
+     - pack.mcmeta
+     - data/
+       - mypack/
+         - recipes/
+           - press/
+             - diamond_from_gold.json
+   </FileTree>
+   </TabItem>
+   </Tabs>
+
+   ```json title="data/mypack/recipe/press/diamond_from_gold.json"
+   {
+     "type": "hbm:press",
+     "stamp": "flat",
+     "input": { "ingredient": "minecraft:gold_block" },
+     "output": "minecraft:diamond"
+   }
+   ```
+
+   `stamp` is the stamp the press needs: `flat`, `plate`, `wire`, `circuit`, `c357`, `c44`, `c9`, `c50` or
+   `printing1` to `printing8`. `input` takes an item or a `#tag`, with an optional `count`; `output` is an item id or
+   `{"id", "count"}`. The machine recipe JSON is the same on every version, including 1.20.1. The `type` field picks
+   the table, so the subfolder name only keeps the recipe id readable (`mypack:press/diamond_from_gold`). Every field
+   is on the [press page](../recipes/press-and-grinding/#press).
+
+4. **Remove an HBM recipe.** Removals are a list of recipe ids in a `recipe_removals` folder of your own namespace.
+   A machine recipe's id is `hbm:<table>/<file name>`:
+
+   ```json title="data/mypack/recipe_removals/press.json"
+   {
+     "recipes": ["hbm:press/ball_resin"]
+   }
+   ```
+
+   This removes the press recipe that turns jungle logs into latex. Do not try to override HBM's file by writing your
+   own `data/hbm/recipe/press/ball_resin.json`: which pack wins is not reliable on every loader.
+
+5. **Load it.** Run `/reload` in the world (or restart it). Machine tables are re-read and synced to every client on
+   reload. Run `/datapack list` and check that `file/my_hbm_pack` is enabled. Then put a flat stamp, a gold block and
+   some fuel in a Burner Press: it presses a diamond once it has heated up. A jungle log with a flat stamp no longer
+   gives latex.
+
+</Steps>
+
+## If nothing happens
+
+- `/datapack list` does not show the pack: `pack.mcmeta` is missing, misnamed or has the wrong keys for your version,
+  or the files are one folder too deep (the pack folder must contain `pack.mcmeta` and `data/` directly).
+- The pack is listed but the recipe is missing: check the folder name (`recipe` or `recipes`) for your version, and
+  look in the game log for a recipe parsing error naming your file.
+- A JSON syntax error (a missing comma or quote) makes the game skip that one file. A JSON validator finds it fastest.
+
+## Where to find HBM's own recipes
+
+HBM's recipes are generated at build time, so they are not in the source repository as JSON. To read them, open the
+NTM - Continuum jar with any zip tool and look under `data/hbm/recipe/<table>/` (`recipes/` on 1.20.1). They are the best
+examples for every table.
+
+## Next steps
+
+- [Machine recipes overview](../recipes/overview/) explains ids, ordering and every table.
+- [Common fields](../recipes/common-fields/) documents the schema most machines share.
+- [Data maps](../data-maps/overview/) change hazards, fuels and other per-item values.
+- [What a datapack can change](../overview/) lists every other folder.
+- [Key concepts](../../getting-started/concepts/) explains ids, units and the version differences.

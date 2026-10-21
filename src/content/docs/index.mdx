@@ -1,0 +1,59 @@
+---
+title: NTM - Continuum Wiki
+description: Make datapacks, KubeJS scripts and addon mods for NTM - Continuum, HBM's Nuclear Tech Mod on six Minecraft targets.
+template: splash
+hero:
+  tagline: Datapacks, KubeJS scripts and addon mods for HBM's Nuclear Tech Mod on 26.1, 1.21.1 and 1.20.1.
+  actions:
+    - text: Start here
+      link: /Continuum-Wiki/getting-started/introduction/
+      icon: right-arrow
+    - text: NTM - Continuum on GitHub
+      link: https://github.com/Warfactory-Official/NTM-Continuum
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+NTM - Continuum ports HBM's Nuclear Tech Mod 1.7.10 to six targets from one source tree. Almost everything a pack
+maker wants to change is data: machine recipes, fluid properties, hazard values, reactor fuels and loot pools are all
+datapack files, and every one of them is reachable from KubeJS too. Addon mods get the same APIs HBM uses itself.
+
+The wiki has one section for each way of changing the mod. Each section has its own sidebar with everything you need
+for it, including the machine recipe, data map and fluid pages all three share. Switch sections at the top of the
+sidebar.
+
+<CardGrid>
+	<Card title="Datapacks" icon="document">
+		Add or remove recipes for any of HBM's machines, change fluid traits, hazard levels, reactor fuels and more,
+		with plain JSON. No other mod needed, works on every loader.
+	</Card>
+	<Card title="KubeJS" icon="seti:javascript">
+		Every machine table is a KubeJS recipe type. The `HBM` global reads and writes radiation, and `HBMEvents`
+		reports nukes, missiles and finished machine recipes.
+	</Card>
+	<Card title="Addon mods" icon="puzzle">
+		Register blocks, fluids, materials and bullets, substitute HBM blocks with your own subclass, and hook into
+		HBM's environment rules. No mixins needed.
+	</Card>
+	<Card title="Six targets" icon="setting">
+		26.1 NeoForge and Fabric, 1.21.1 NeoForge and Fabric, 1.20.1 Forge and Fabric. The same files and scripts work
+		on all of them.
+	</Card>
+</CardGrid>
+
+## Pick a section
+
+<CardGrid>
+	<LinkCard title="Datapacks" href="/Continuum-Wiki/datapacks/overview/" description="What a datapack can change, your first datapack, and every machine table and data map." />
+	<LinkCard title="KubeJS" href="/Continuum-Wiki/kubejs/setup/" description="Recipe scripts, the HBM global, HBMEvents and the startup registry." />
+	<LinkCard title="Addon mods" href="/Continuum-Wiki/addons/overview/" description="Build an addon mod on Golem Core: registration, hooks, fluids, recipes in Java." />
+	<LinkCard title="New here? Start here" href="/Continuum-Wiki/getting-started/introduction/" description="What the mod is, which section fits you, and the ids, units and rules the whole mod uses." />
+</CardGrid>
+
+:::tip[Ask an AI about any page]
+Every page in the sections has an **Open in AI chat** menu under its title. It sends the page to ChatGPT, Claude, Grok,
+Cursor, GitHub Copilot or Scira, ready for your questions, or opens it as Markdown to
+paste anywhere else.
+:::

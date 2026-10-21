@@ -1,0 +1,231 @@
+---
+title: What a datapack can change
+description: Every HBM data folder a datapack can add to or change, the folder layout, and the version differences.
+sidebar:
+  order: 1
+  label: Overview
+---
+
+import { FileTree, Tabs, TabItem } from '@astrojs/starlight/components';
+
+NTM - Continuum keeps most of its numbers in datapack files instead of code. A datapack can add to them or change them
+without any Java, on all six targets. This page maps every folder HBM reads, says how copies from several packs
+combine, and lists what differs between Minecraft versions. To make a pack step by step, see
+[Your first datapack](../first-datapack/).
+
+## HBM's data folders
+
+These folders are HBM's own formats. They work the same on every target.
+
+| Folder or file | What it holds | Copies from several packs | Page |
+|---|---|---|---|
+| `recipe/<table>/` | Machine recipes (press, assembler, chemical plant and every other machine) | One file per recipe; top pack wins per id | [Machine recipes](../recipes/overview/) |
+| `recipe_removals/` | Recipes of any mod and any type to remove, by id | Every file applies | [Removing recipes](../recipes/removing-recipes/) |
+| `fluid_property/` | A fluid's colour, temperature, hazard diamond and traits | Top pack wins, per fluid | [Fluids](../data/fluids/) |
+| `fluid_property_patch/` | Changes to another mod's fluid, without replacing its file | Every patch applies | [Fluids](../data/fluids/#patching-a-fluid-you-do-not-own) |
+| `value_maps/<registry>/` | Per-item, per-block, per-fluid, per-entity-type and per-material values (hazards, fuels, armor, parts) | Every pack's copy merges | [Data maps](../data-maps/overview/) |
+| `value_maps/patches/` | Changes to another mod's data map | Applied after every copy | [Data maps](../data-maps/overview/#patching-another-mods-map) |
+| `fallout_transform/` | What nuclear fallout turns blocks into | Top pack wins per file; files sorted by `priority` | [Fallout transform](../data/fallout-transform/) |
+| `item_pool/` | Weighted loot pools (structure loot, supply drops, vending machines, satellites) | Every pack's copy merges | [Item pools](../data/item-pools/) |
+| `tags/` | Vanilla tags; HBM reads some of its own and many `c:` tags | Vanilla tag merging | [Tags](../data/tags/) |
+
+Any recipe file, of any type, may also carry a top-level `golem:requires` list that ties it to an `hbm.cfg` switch.
+See [Removing recipes](../recipes/removing-recipes/#golemrequires).
+
+## Vanilla and loader data HBM ships
+
+HBM also ships ordinary data in vanilla's and the loaders' formats. A datapack can replace these files with the
+usual vanilla rules (the top pack wins per file):
+
+| Folder | What HBM keeps there |
+|---|---|
+| `recipe/` (top level) | Crafting, smelting and other vanilla recipes. Remove them with a [removal list](../recipes/removing-recipes/). |
+| `loot_table/blocks/` | Block drops. |
+| `advancement/` | HBM's advancements. |
+| `damage_type/` | HBM's damage types (death messages, exhaustion, scaling). |
+| `jukebox_song/` | HBM's music discs (26.1 and 1.21.1; 1.20.1 has no jukebox songs as data). |
+| `worldgen/configured_feature/`, `worldgen/placed_feature/` | Ores, oil deposits, plants and other world features. Many placements also read `hbm.cfg` when a chunk generates. |
+| `worldgen/structure/`, `worldgen/structure_set/` | HBM's structures, so `/locate` finds them. |
+| `worldgen/biome/` | The crater biomes. |
+| `neoforge/biome_modifier/` (NeoForge), `forge/biome_modifier/` (Forge) | Which biomes get HBM's features and mob spawns. |
+| `neoforge/data_maps/item/furnace_fuels.json` (NeoForge only) | Furnace burn times of HBM's fuels. |
+
+Points that are HBM-specific:
+
+- Which structure spawns in a region is drawn from the weights in `hbm.cfg`, not from the `weight` values in
+  `data/hbm/worldgen/structure_set/ntm_structures.json`. Changing those weights in a datapack has no effect.
+- The biome tags `hbm:has_structure/<structure>` decide which biomes a structure may use, and the
+  `hbm:biome_dictionary/<type>` tags tell HBM which 1.7 biome type a modded biome is. See [Tags](../data/tags/#biome-tags).
+- HBM's NBT structure templates are read from the mod jar, not from `data/*/structure/`. A datapack cannot replace
+  their contents.
+- Fabric has no biome modifier files: HBM adds the same features and spawns in code. On Fabric, change where a
+  feature appears through the biome tags it uses (for example `hbm:has_feature/foxglove`) or by overriding its
+  placed feature.
+- HBM's extra loot in vanilla chests (dungeons, mineshafts and others) is added in code when the table loads. A
+  datapack that replaces a vanilla chest table still gets HBM's extra pool.
+
+## Folder layout
+
+Put your files under your own namespace. Use `data/hbm/...` only for the folders that merge (HBM's data maps and
+tags), or when you mean to replace one of HBM's files; prefer the patch folders and removal lists for that.
+
+<FileTree>
+- my_pack/
+  - pack.mcmeta
+  - data/
+    - mypack/
+      - recipe/ machine recipes (`recipes/` on 1.20.1)
+        - press/
+          - my_plate.json
+      - recipe_removals/
+        - removals.json
+      - fluid_property/ properties of the fluid `mypack:<name>`
+      - fluid_property_patch/
+        - hbm/
+          - oil.json changes `hbm:oil`
+      - value_maps/
+        - patches/
+          - hbm/
+            - item/
+              - hazards.json changes `hbm:hazards`
+      - fallout_transform/
+        - my_rules.json
+      - item_pool/
+        - pool_supplies.json adds rows to `POOL_SUPPLIES`
+    - hbm/
+      - value_maps/
+        - item/
+          - hazards.json merges into `hbm:hazards`
+    - c/
+      - tags/
+        - item/ `tags/items/` on 1.20.1
+          - ingots/
+            - uranium.json
+</FileTree>
+
+Some folders take the file's namespace from the thing it describes, others from you:
+
+- `fluid_property/<path>.json` under namespace `ns` describes the fluid `ns:<path>`. Water is
+  `data/minecraft/fluid_property/water.json`.
+- A data map file sits under the map's namespace (`data/hbm/value_maps/item/hazards.json`), and every pack's copy is
+  merged. A patch sits under your namespace.
+- An item pool's name is the file name, in any namespace. `data/mypack/item_pool/pool_supplies.json` adds to HBM's
+  `POOL_SUPPLIES`.
+- `fallout_transform/` and `recipe_removals/` files can have any name in any namespace.
+- A machine recipe can sit in any subfolder of `recipe/`: its `type` (`hbm:press`) picks the table. Naming the
+  subfolder after the table keeps ids readable (`mypack:press/my_plate`).
+
+## pack.mcmeta
+
+The data pack format depends on the Minecraft version:
+
+<Tabs syncKey="mc">
+<TabItem label="26.1">
+```json title="pack.mcmeta"
+{
+  "pack": {
+    "description": "My HBM tweaks",
+    "min_format": 101,
+    "max_format": 101
+  }
+}
+```
+26.1 uses `min_format` and `max_format` instead of `pack_format`.
+</TabItem>
+<TabItem label="1.21.1">
+```json title="pack.mcmeta"
+{
+  "pack": {
+    "description": "My HBM tweaks",
+    "pack_format": 48
+  }
+}
+```
+</TabItem>
+<TabItem label="1.20.1">
+```json title="pack.mcmeta"
+{
+  "pack": {
+    "description": "My HBM tweaks",
+    "pack_format": 15
+  }
+}
+```
+</TabItem>
+</Tabs>
+
+:::caution
+A `pack.mcmeta` with a wrong key is rejected by vanilla, and the whole pack is ignored without a visible error. If
+nothing in your pack seems to apply, check this file first.
+:::
+
+## Version differences
+
+Minecraft 1.21 renamed several vanilla data folders from plural to singular. HBM writes its data in the singular
+(26.1) form and its build renames the folders for 1.20.1. Your datapack must use the spelling of the version it runs on:
+
+| 26.1 and 1.21.1 | 1.20.1 |
+|---|---|
+| `recipe/` | `recipes/` |
+| `loot_table/` | `loot_tables/` |
+| `advancement/` | `advancements/` |
+| `structure/` | `structures/` |
+| `tags/block/` | `tags/blocks/` |
+| `tags/item/` | `tags/items/` |
+| `tags/fluid/` | `tags/fluids/` |
+| `tags/entity_type/` | `tags/entity_types/` |
+| `tags/game_event/` | `tags/game_events/` |
+| `function/` | `functions/` |
+| `predicate/` | `predicates/` |
+| `item_modifier/` | `item_modifiers/` |
+
+This includes HBM's machine recipes: on 1.20.1 they are read from `data/<ns>/recipes/<table>/`. The JSON inside is the
+same on every version.
+
+Inside vanilla's own files, some shapes differ too. HBM's machine recipes, data maps and other HBM formats do not
+change:
+
+| | 26.1 | 1.21.1 | 1.20.1 |
+|---|---|---|---|
+| Crafting and smelting ingredient | `"minecraft:stick"`, `"#c:rods/wooden"` | `{"item": "minecraft:stick"}`, `{"tag": "c:rods/wooden"}` | as 1.21.1 |
+| Crafting result | `{"id": "hbm:ingot_steel", "count": 2}` | as 26.1 | `{"item": "hbm:ingot_steel", "count": 2}` |
+| Smelting result | `{"id": "hbm:ingot_steel"}` | as 26.1 | `"hbm:ingot_steel"` |
+| Extra item data | `components` | `components` | NBT `tag` |
+| Biome modifiers | `neoforge/biome_modifier/` (NeoForge) | `neoforge/biome_modifier/` (NeoForge) | `forge/biome_modifier/` (Forge) |
+
+Fabric has no biome modifier files on any version. Load conditions (a file that loads only when another mod is
+present) are spelled differently by each loader; see [Removing recipes](../recipes/removing-recipes/#load-conditions-per-loader).
+
+HBM's own folders keep their names on every version: `value_maps`, `fluid_property`, `fluid_property_patch`,
+`fallout_transform`, `item_pool` and `recipe_removals`. Tags inside them (such as `#c:ingots/uranium` in a data map)
+use the same spelling everywhere.
+
+On 1.20.1 Forge the convention tag namespace is `forge:`, not `c:`. HBM still ships its `c:` tags there and also copies
+each of them to `forge:` with the same members. Its crafting recipes read the `forge:` copies; machine recipes and data
+maps keep reading `c:`. See [Tags](../data/tags/#c-tags-on-1201-forge).
+
+## When changes apply
+
+HBM reads all of these folders when the server starts and again on every `/reload`, and sends them to every client.
+You do not need to restart the game after editing a file. A file that fails to parse is skipped with a line in the
+log (`[HBM] Skipped ... fluid property file(s)`, `Data map hbm:hazards: skipping ...`,
+`Fallout transform file ... is broken`), and the rest of the folder still loads. A broken recipe file is reported by
+the game's own recipe loader.
+
+Worldgen changes (features, structures, biomes, biome modifiers) only affect chunks generated after the world loads
+with them. `/reload` does not reload worldgen files: leave the world and open it again.
+
+## Settings that are not datapacks
+
+Some of HBM's behaviour is set in config files in the game's `config/` folder, not in datapacks. They apply to the
+whole game or server, and most are read at start-up:
+
+| File | What it holds |
+|---|---|
+| `config/hbm.cfg` | 1.7's main config: recipe modes (528 mode, LBSM, expensive mode), structure spawn weights, world generation rates, radiation and hazard switches. |
+| `config/hbmConfig/hbmServer.json` | Server settings that `/ntmserver` lists and changes. |
+| `config/hbmConfig/hbmClient.json` | Client display settings that `/ntmclient` lists and changes. |
+| `config/hbmConfig/hbmMachines.json` | Per-machine numbers 1.7 made configurable. |
+| `config/hbmConfig/hbmRadResist.json` | Per-item radiation resistance overrides. These win over the [radiation_resistance](../data-maps/armor/#radiation_resistance) data map. HBM writes `_hbmRadResist.json` as a template when the file is missing. |
+| `config/hbmConfig/hbmCustomMachines.json` | Player-defined custom machines. |
+
