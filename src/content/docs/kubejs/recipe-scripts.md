@@ -67,9 +67,9 @@ Many fields take a narrower form than "any ingredient". The signature list below
 | item stack in | one item with a count | a tag |
 | tag | one tag | an item, a count other than 1 |
 | grid slot | an ingredient, or `''` for an empty slot | |
-| stack | one item with a count | a chance |
-| item id | one item | a count other than 1, a chance |
-| output | one item with a count and an optional chance | |
+| stack | one item with a count | a chance, item data |
+| item id | one item | a count other than 1, a chance, item data |
+| output | one item with a count, an optional chance and its item data | |
 | fluid stack | a fluid with an amount | |
 | fluid id | a fluid; the amount is ignored | |
 
@@ -97,6 +97,28 @@ event.recipes.hbm.chemical_plant('kjs.lucky')
 ```
 
 On KubeJS 7 and 8 a typed item output has no chance, so a chance always needs the plain object form.
+
+### Item data on outputs
+
+A generic table's output (and its `icon`) keeps whatever data the script's stack carries: data components from
+1.20.5, NBT on 1.20.1. Use it for items whose meaning is in their data, such as a vehicle crate:
+
+```js
+// 1.21.1 and 26.1: component syntax
+event.recipes.hbm.assembly_machine('kjs.lav150')
+    .inputItems(['4x hbm:plate_welded_steel', '4x hbm:motor'])
+    .outputItems(['superbwarfare:container[block_entity_data={id:"superbwarfare:container",EntityType:"superbwarfare:lav_150"}]'])
+    .duration(1200).power(100)
+// 1.20.1: the stack's NBT
+event.recipes.hbm.assembly_machine('kjs.lav150')
+    .inputItems(['4x hbm:plate_welded_steel', '4x hbm:motor'])
+    .outputItems([Item.of('superbwarfare:container', '{BlockEntityTag:{EntityType:"superbwarfare:lav_150"}}')])
+    .duration(1200).power(100)
+```
+
+The row stores it as the target's own spelling, `components` (1.20.5+) or `nbt` (an SNBT string, 1.20.1), next to
+`id` and `count`. A field whose form cannot hold data (a record table's single output) rejects such a stack with
+`this output takes no item data: ...` instead of dropping it. Copy a stack's exact component string with `/kubejs hand`.
 
 You can also write a whole recipe as JSON with KubeJS's own `event.custom`:
 
@@ -154,7 +176,8 @@ event.recipes.hbm.cyclotron('hbm:powder_neodymium', 'hbm:powder_cerium', '#minec
 ```
 
 Other messages: `empty ingredient: ...`, `empty item: ...`, `empty fluid: ...` (an unknown id), `takes one item or one
-tag, not ...` (a multi-item ingredient), `this output takes no chance: ...`, `this output takes no count`.
+tag, not ...` (a multi-item ingredient), `this output takes no chance: ...`, `this output takes no count`,
+`this output takes no item data: ...`.
 
 Plain objects are not checked by the script function. A row that is wrong inside (a bad stamp name, an unknown
 material, a missing key in a plain object) fails when the table reads it, and the error shows up in the log like a broken
@@ -232,7 +255,7 @@ These all share one schema: `table(name)`, then any of these optional fields, in
 
 | Field | Value |
 |---|---|
-| `output_items` / `outputItems` | list of output (item with count and chance) |
+| `output_items` / `outputItems` | list of output (item with count, chance and item data) |
 | `input_items` / `inputItems` | list of ingredient |
 | `output_fluids` / `outputFluids` | list of fluid stack |
 | `input_fluids` / `inputFluids` | list of fluid stack |

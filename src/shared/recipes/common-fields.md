@@ -96,6 +96,7 @@ Notes:
 |---|---|
 | `"id"` | One item. |
 | `{"id", "count", "chance", "item_data"}` | `count` defaults to 1. `chance` (0 to 1) rolls once per item of the stack, so `count: 4, chance: 0.25` averages one item; leave it out for a guaranteed output. `item_data` is [item data](#item-data). |
+| `{"id", ..., "components"}` / `{"id", ..., "nbt"}` | Any other data of the stack, in the target's own form (see [raw item data](#raw-item-data)). |
 | `{"tag", "count", "chance"}` | The first item of an item tag, looked up when the table loads (1.7's `OreDictionary.getOres(name).get(0)`). If the tag is empty the output is empty, so such a row should also `require` the tag. Note the tag is written without `#` here. |
 
 A **weighted choice** gives exactly one of several items. It must be the only entry of `output_items`, written as a
@@ -264,6 +265,18 @@ data components):
 ```json
 { "id": "hbm:fluid_pack_full", "item_data": { "fluid": "hbm:oxygen", "fluid_amount": 32000 } }
 { "id": "hbm:blueprints", "item_data": { "blueprint_pool": "528.arty" } }
+```
+
+### Raw item data
+
+A generic row's outputs and `icon` may also carry data HBM has no name for (another mod's item, a block entity inside
+a crate), in the Minecraft version's own spelling: `"components"` (a data component map, 1.20.5+) or `"nbt"` (an SNBT
+string, 1.20.1). The two are not interchangeable, so such a file works on one side of 1.20.5 only; prefer `item_data`
+where it can state the value. KubeJS writes this form for you when an output stack has data.
+
+```json
+{ "id": "superbwarfare:container", "components": { "minecraft:block_entity_data": { "id": "superbwarfare:container", "EntityType": "superbwarfare:lav_150" } } }
+{ "id": "superbwarfare:container", "nbt": "{BlockEntityTag:{EntityType:\"superbwarfare:lav_150\"}}" }
 ```
 
 ## Fluid stacks
