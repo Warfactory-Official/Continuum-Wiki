@@ -9,8 +9,11 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const TEMPLATES = path.join(ROOT, 'templates');
 const OUT = path.join(ROOT, 'public', 'generator', 'manifest.json');
+// The picked files and each node's versions: scripts/check-releases.mjs compares the files with CurseForge's newest,
+// and the project setup page shows both (src/generator/releases.ts).
+const RELEASES = path.join(ROOT, 'public', 'generator', 'releases.json');
 
-const PROJECTS = {
+export const PROJECTS = {
 	golemcore: { id: 1719361, repo: 'Golem-Core' },
 	hbm: { id: 1719328, repo: 'NTM-Continuum' },
 	gemrender: { id: 1735539 },
@@ -61,7 +64,7 @@ function fallbackFiles() {
 }
 
 /** Newest file per node from the CurseForge listing (cfwidget), matched by game version and loader tags. */
-async function latestFiles(key) {
+export async function latestFiles(key) {
 	const data = await get(`https://api.cfwidget.com/${PROJECTS[key].id}`, 'json');
 	const files = {};
 	let version = null;
@@ -136,6 +139,15 @@ function bundle(kind, overrides = {}) {
 	return { meta, files };
 }
 
+/** Each node's gradle.properties as the generator writes it, with this build's CurseForge files, for the docs pages. */
+function nodeFiles(files, cf) {
+	return Object.fromEntries(Object.keys(NODE_GAME).map((node) => [node, files
+		.find((f) => f.path === `versions/${node}/gradle.properties`).text
+		.replace('{{golemFile}}', cf.golemcore.files[node])
+		.replace('{{hbmFile}}', cf.hbm.files[node])
+		.replace('{{gemFile}}', cf.gemrender.files[node])]));
+}
+
 export async function buildManifest(log = console) {
 	const cf = await curseforge(log);
 	const addonFiles = walk(path.join(TEMPLATES, 'addon'));
@@ -156,6 +168,7 @@ export async function buildManifest(log = console) {
 	};
 	fs.mkdirSync(path.dirname(OUT), { recursive: true });
 	fs.writeFileSync(OUT, JSON.stringify(manifest));
+	fs.writeFileSync(RELEASES, JSON.stringify({ ...cf, nodes: nodeFiles(manifest.templates.addon.files, cf) }));
 	log.info(`template generator: Golem Core ${cf.golemcore.version}, NTM - Continuum ${cf.hbm.version}, GemRender ` +
 		`${cf.gemrender.version} (${cf.golemcore.source}); scripts from ${manifest.sources.golemScripts}, node versions ` +
 		`from ${manifest.sources.nodeVersions}`);

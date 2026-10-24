@@ -1,0 +1,38 @@
+---
+// The per-node versions table of the project setup page, from the releases the template generator was built with.
+import { NODES, prop } from '../generator/releases.ts';
+
+const loader = (node: string) =>
+	['deps.neoforge', 'deps.forge', 'deps.fabric_loader'].map((k) => [k, prop(node, k)]).find(([, v]) => v);
+const loaderRange = (node: string) =>
+	['deps.neoforge_loader_range', 'deps.forge_loader_range', 'deps.fabric_api'].map((k) => [k, prop(node, k)]).find(([, v]) => v);
+const rows: [string, (node: string) => string][] = [
+	['deps.minecraft', (n) => prop(n, 'deps.minecraft') ?? ''],
+	['deps.minecraft_range', (n) => prop(n, 'deps.minecraft_range') ?? ''],
+	['java_version', (n) => prop(n, 'java_version') ?? ''],
+	['pack_format', (n) => prop(n, 'pack_format') ?? ''],
+	['loader', (n) => `${loader(n)?.[0]}=${loader(n)?.[1]}`],
+	['loader range / API', (n) => `${loaderRange(n)?.[0]}=${loaderRange(n)?.[1]}`],
+	['deps.jei_mc / deps.jei', (n) => `${prop(n, 'deps.jei_mc')} / ${prop(n, 'deps.jei')}`],
+	['deps.golemcore', (n) => prop(n, 'deps.golemcore') ?? ''],
+	['deps.hbm', (n) => prop(n, 'deps.hbm') ?? ''],
+	['deps.gemrender', (n) => prop(n, 'deps.gemrender') ?? ''],
+];
+---
+
+<table>
+	<thead>
+		<tr>
+			<th>Key</th>
+			{NODES.map(([, label]) => <th>{label}</th>)}
+		</tr>
+	</thead>
+	<tbody>
+		{rows.map(([key, value]) => (
+			<tr>
+				<td>{key.includes('.') || key.includes('_') ? <code>{key}</code> : key}</td>
+				{NODES.map(([node]) => <td><code>{value(node)}</code></td>)}
+			</tr>
+		))}
+	</tbody>
+</table>

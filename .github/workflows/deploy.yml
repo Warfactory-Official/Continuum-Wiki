@@ -3,8 +3,11 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-  # Daily, so the template generator picks up new Golem Core and NTM - Continuum releases (scripts/templates.mjs).
   schedule:
+    # Every 10 minutes: rebuild only when CurseForge has approved new Golem Core, NTM - Continuum or GemRender files
+    # for the template generator (scripts/check-releases.mjs).
+    - cron: '*/10 * * * *'
+    # Daily: rebuild regardless, in case a check was missed or CurseForge could not be read.
     - cron: '17 4 * * *'
   workflow_dispatch:
 
@@ -18,7 +21,21 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  check:
+    if: github.event_name == 'schedule' && github.event.schedule == '*/10 * * * *'
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.check.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts
+      - id: check
+        run: node scripts/check-releases.mjs
+
   build:
+    needs: check
+    if: always() && (needs.check.result == 'skipped' || needs.check.outputs.changed == 'true')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,6 +45,7 @@ jobs:
 
   deploy:
     needs: build
+    if: always() && needs.build.result == 'success'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

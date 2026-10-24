@@ -5,6 +5,10 @@ sidebar:
   order: 2
 ---
 
+import { Code } from '@astrojs/starlight/components';
+import NodeVersions from '../../../components/NodeVersions.astro';
+import { golemcore, hbm, gemrender, nodeFileBare, prop } from '../../../generator/releases.ts';
+
 This page lists every file an addon mod project needs before it has any content. The build is NTM: Space's
 ([NTM-Continuum-Space](https://github.com/Warfactory-Official/NTM-Continuum-Space)), trimmed, with Golem Core,
 NTM - Continuum and GemRender taken from CurseForge through [CurseMaven](https://www.cursemaven.com/). The project builds
@@ -46,7 +50,7 @@ my-addon/
 
 `gradle/golem/` holds Golem Core's shared build scripts (see [The shared build scripts](#the-shared-build-scripts)). Copy
 them from `gradle/mod/` of [Golem Core](https://github.com/Warfactory-Official/Golem-Core) at the tag of the release you
-build against (`v1.0.1`), so the scripts match the jar.
+build against (<code>v{golemcore.version}</code>), so the scripts match the jar.
 
 ## settings.gradle.kts
 
@@ -141,8 +145,7 @@ versions belongs in Golem Core, not in your addon mod.
 The root file holds the mod identity, the oldest Golem Core and HBM versions your metadata accepts, the `golem.build.*`
 parameters for the shared scripts, and a `[VERSIONED]` placeholder for every key all node files set.
 
-```properties title="gradle.properties"
-org.gradle.jvmargs=-Xmx3G -XX:+UseG1GC -Dfile.encoding=UTF-8
+<Code lang="properties" title="gradle.properties" code={`org.gradle.jvmargs=-Xmx3G -XX:+UseG1GC -Dfile.encoding=UTF-8
 org.gradle.parallel=true
 org.gradle.caching=true
 
@@ -159,8 +162,8 @@ mod.credits=
 mod.description=An addon for NTM - Continuum.
 
 # The lowest Golem Core and NTM - Continuum versions the mod metadata accepts.
-deps.golemcore_floor=1.0.1
-deps.hbm_floor=1.0.1
+deps.golemcore_floor=${golemcore.version}
+deps.hbm_floor=${hbm.version}
 
 golem.build.dejson.classes=gradle/dejson-classes.txt
 golem.build.dejson.authored=gradle/dejson-authored.txt
@@ -180,8 +183,7 @@ deps.neoforge_loader_range=[VERSIONED]
 deps.forge=[VERSIONED]
 deps.forge_loader_range=[VERSIONED]
 
-loomx.loom_version=1.16.3
-```
+loomx.loom_version=1.16.3`} />
 
 Keys only some nodes set (`deps.jei`, `deps.gemrender_flywheel`, `deps.neoforge_floor`, `deps.lwjgl`) get no
 placeholder: a node that does not set one would read the text `[VERSIONED]`. `golem.build.releaseJar.testPackages` names
@@ -203,49 +205,25 @@ golem.build.legacyAssets.selectProperties=hbm:model_state
 Each node's file holds that node's dependency versions and the CurseForge files of Golem Core, NTM - Continuum and
 GemRender. Keep the versions equal to HBM's file for the same node, at the release you build against
 ([versions/](https://github.com/Warfactory-Official/NTM-Continuum/tree/main/versions)), since the addon mod runs on that HBM
-node. The values for NTM - Continuum 1.0.1:
+node. The values for NTM - Continuum {hbm.version}, the newest release on CurseForge when this page was built:
 
-| Key | 26.1 NeoForge | 26.1 Fabric | 1.21.1 NeoForge | 1.21.1 Fabric | 1.20.1 Forge | 1.20.1 Fabric |
-|---|---|---|---|---|---|---|
-| `deps.minecraft` | `26.1.2` | `26.1.2` | `1.21.1` | `1.21.1` | `1.20.1` | `1.20.1` |
-| `deps.minecraft_range` | `[26.1.2, 26.2)` | `>=26.1.2` | `[1.21.1, 1.22)` | `>=1.21.1 <1.22` | `[1.20.1,1.21)` | `>=1.20.1 <1.21` |
-| `java_version` | `25` | `25` | `21` | `21` | `17` | `17` |
-| `pack_format` | `84` | `84` | `34` | `34` | `15` | `15` |
-| loader | `deps.neoforge=26.1.2.114` | `deps.fabric_loader=0.19.5` | `deps.neoforge=21.1.248` | `deps.fabric_loader=0.19.5` | `deps.forge=1.20.1-47.2.30` | `deps.fabric_loader=0.19.5` |
-| loader range / API | `deps.neoforge_loader_range=[4,)` | `deps.fabric_api=0.155.3+26.1.2` | `deps.neoforge_loader_range=[4,)` | `deps.fabric_api=0.116.17+1.21.1` | `deps.forge_loader_range=[47,)` | `deps.fabric_api=0.92.12+1.20.1` |
-| `deps.jei_mc` / `deps.jei` | `26.1.2` / `29.43.0.107` | `26.1.2` / `29.43.0.107` | `1.21.1` / `19.44.0.401` | `1.21.1` / `19.44.0.401` | `1.20.1` / `15.49.0.188` | `1.20.1` / `15.49.0.188` |
-| `deps.golemcore` | `9302757` | `9302756` | `9302755` | `9302752` | `9302754` | `9302753` |
-| `deps.hbm` | `9302876` | `9302877` | `9302870` | `9302867` | `9302869` | `9302871` |
-| `deps.gemrender` | `9302431` | `9302432` | `9302429` | `9302430` | `9302428` | `9302427` |
+<NodeVersions />
 
 `deps.golemcore`, `deps.hbm` and `deps.gemrender` are CurseForge file ids: the number at the end of a file's page on
 [Golem Core](https://www.curseforge.com/minecraft/mc-mods/golem-core/files/all),
 [NTM - Continuum](https://www.curseforge.com/minecraft/mc-mods/ntm-continuum/files/all) or
 [GemRender](https://www.curseforge.com/minecraft/mc-mods/gemrender/files/all). Pick the file for the node's Minecraft
-version and loader. The ids above are Golem Core 1.0.1, NTM - Continuum 1.0.1 and GemRender 0.1.18. When you move to a
+version and loader. The ids above are Golem Core {golemcore.version}, NTM - Continuum {hbm.version} and GemRender {gemrender.version}. When you move to a
 newer release, also raise `deps.golemcore_floor` and `deps.hbm_floor`, and copy that Golem Core release's scripts into
 `gradle/golem/`.
 
-1.20.1 Fabric also sets `deps.lwjgl=3.3.1`; the other Fabric nodes leave it blank. 1.21.1 Fabric and 1.20.1 Fabric set
-`deps.gemrender_flywheel` (`1.0.6` and `1.0.6-281`): GemRender's 1.x Fabric jar nests Flywheel, which a Loom dev run does
-not load, so the dev run adds it beside it. 26.1 NeoForge sets `deps.neoforge_floor=26.1.2.109`, the oldest NeoForge the
+1.20.1 Fabric also sets <code>deps.lwjgl={prop('1.20.1-fabric', 'deps.lwjgl')}</code>; the other Fabric nodes leave it blank. 1.21.1 Fabric and 1.20.1 Fabric set
+`deps.gemrender_flywheel` (<code>{prop('1.21.1-fabric', 'deps.gemrender_flywheel')}</code> and <code>{prop('1.20.1-fabric', 'deps.gemrender_flywheel')}</code>): GemRender's 1.x Fabric jar nests Flywheel, which a Loom dev run does
+not load, so the dev run adds it beside it. 26.1 NeoForge sets <code>deps.neoforge_floor={prop('26.1-neoforge', 'deps.neoforge_floor')}</code>, the oldest NeoForge the
 released jar accepts (see [Scripting surface](../scripting-surface/#dev-runs)). JEI is optional: leave `deps.jei` blank to
 build without it.
 
-```properties title="versions/1.21.1-neoforge/gradle.properties"
-deps.golemcore=9302755
-deps.hbm=9302870
-deps.gemrender=9302429
-
-deps.minecraft=1.21.1
-deps.minecraft_range=[1.21.1, 1.22)
-java_version=21
-pack_format=34
-deps.neoforge=21.1.248
-deps.neoforge_loader_range=[4,)
-deps.jei_mc=1.21.1
-deps.jei=19.44.0.401
-```
+<Code lang="properties" title="versions/1.21.1-neoforge/gradle.properties" code={nodeFileBare('1.21.1-neoforge')} />
 
 ## The loader buildscripts
 
