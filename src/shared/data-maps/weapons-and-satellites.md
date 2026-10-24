@@ -2,7 +2,7 @@
 title: Weapons and satellites
 description: Custom nuke ingredients, by item and by fluid cell, and which items launch which satellite.
 sidebar:
-  order: 8
+  order: 10
 ---
 
 The [overview](../overview/) explains the file format.

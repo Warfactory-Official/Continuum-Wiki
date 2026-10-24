@@ -1,0 +1,45 @@
+modLoader = "javafml"
+loaderVersion = "${forge_loader_range}"
+license = "${mod_license}"
+{{#links}}
+issueTrackerURL = "@golem.issues@"
+{{/links}}
+
+[[mods]]
+modId = "${mod_id}"
+version = "${mod_version}"
+displayName = "${mod_name}"
+{{#links}}
+displayURL = "@golem.homepage@"
+{{/links}}
+authors = "${mod_author}"
+description = '''${mod_description}@golem.credits@'''
+
+[[dependencies.${mod_id}]]
+modId = "forge"
+mandatory = true
+versionRange = "${forge_loader_range}"
+ordering = "NONE"
+side = "BOTH"
+
+# AFTER both: Golem Core makes Forge's parallel mod construction wait for them.
+[[dependencies.${mod_id}]]
+modId = "golemcore"
+mandatory = true
+versionRange = "[${golemcore_floor},)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "hbm"
+mandatory = true
+versionRange = "[${hbm_floor},)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "minecraft"
+mandatory = true
+versionRange = "${minecraft_range}"
+ordering = "NONE"
+side = "BOTH"

@@ -6,7 +6,8 @@ sidebar:
 ---
 
 Fifteen tables use one shared row schema, called the generic schema here (in the code, `GenericRecipe` and its
-codec `GenericRecipeCodec`; it is the same schema ntm-next uses, so one file works for both ports). The other tables
+codec `GenericRecipeCodec`). It follows ntm-next's layout, but a file written for ntm-next does not load unchanged:
+see [Files from ntm-next](#files-from-ntm-next). The other tables
 have a record of their own, but they build it from the same pieces: the same ingredient forms, item outputs, fluid
 stacks and material stacks. This page describes both.
 
@@ -305,3 +306,20 @@ Molten metal in the crucible, foundry and arc furnace is counted in quanta: 72 t
 |---|---|---|---|
 | `material` | material name | yes | An HBM material by name. |
 | `amount` | int, above 0 | yes | Quanta. |
+
+## Files from ntm-next
+
+ntm-next, another port of HBM, uses a similar recipe layout. Its files need these changes before they load here:
+
+- **Item data.** ntm-next matches and writes item data as `components` and `predicates`. Here an input names it with
+  `item_data` (and `"exact": true` to require it), and an output with `item_data`.
+- **`name`.** Required here; ntm-next defaults it from the file path.
+- **Weighted outputs.** Here a weighted choice must be the only entry of `output_items`. ntm-next allows a weighted list
+  at each output position.
+- **Matching item data.** In ntm-next a stack whose data differs from the item's defaults is refused unless the recipe
+  names that data. Here a plain item ingredient matches the item with any data, and `exact` narrows it.
+- **Conditions.** ntm-next's `hbm:flag` condition is not read here; use `golem:requires` or the row field `requires`
+  (see [Removing recipes](../removing-recipes/#golemrequires)).
+- **Removing a recipe.** ntm-next disables a recipe by overriding its file; here use a
+  [removal list](../removing-recipes/).
+

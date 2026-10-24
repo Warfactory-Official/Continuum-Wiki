@@ -4,6 +4,7 @@ import starlight from '@astrojs/starlight';
 import starlightSidebarTopics from 'starlight-sidebar-topics';
 import sharedPages from './scripts/shared-pages.mjs';
 import markdownPages from './scripts/markdown-pages.mjs';
+import templates from './scripts/templates.mjs';
 
 const SITE = 'https://warfactory-official.github.io';
 const BASE = '/Continuum-Wiki';
@@ -22,6 +23,7 @@ export default defineConfig({
 	base: BASE,
 	integrations: [
 		sharedPages(),
+		templates(),
 		starlight({
 			title: 'NTM - Continuum Wiki',
 			description:

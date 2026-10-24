@@ -198,6 +198,20 @@ public static final Registrar.EntityHandle<EntityRideableRocket> RIDEABLE_ROCKET
                 MobCategory.MISC)).fireImmune().sized(2.0F, 8.0F).clientTrackingRange(63).updateInterval(1), key));
 ```
 
+## Radiation shielding and immunity
+
+A block that stops radiation implements `com.hbm.interfaces.IRadResistantBlock`. Its `isRadResistant(level, pos)` decides
+per position (HBM's doors return `true` only while closed), and `isRadShielding()` adds the `[Radiation shielding]`
+tooltip line. Whenever the answer at a position changes (the block is placed, removed, opened or closed), call
+`RadiationSystemNT.markSectionForRebuild(serverLevel, pos)` so radiation pockets are rebuilt; without it radiation keeps
+flowing through the old gap. A block that always seals needs no code: add it to the block tag `hbm:radiation_resistant`
+(see [Radiation in the world](../data-maps/radiation/#radiation-proof-blocks)), and HBM rebuilds the pockets
+itself.
+
+An entity class that implements `com.hbm.interfaces.IRadiationImmune` never takes radiation. For entity types decided by
+data, use the `hbm:radiation_immune` tag; for a rule decided at run time, the `ContaminationUtil.RAD_IMMUNE`
+[hook](../hooks/#other-hbm-hooks).
+
 ## Client registrations
 
 Screens, renderers and other client-only bindings go through Golem Core's `dev.golem.core.client` facades, called from

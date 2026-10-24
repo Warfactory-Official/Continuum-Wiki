@@ -2,7 +2,7 @@
 title: Machine parts
 description: Particle accelerator coils, drill bits, pistons, machine upgrades, plasma forge boosters and battery packs.
 sidebar:
-  order: 5
+  order: 7
 ---
 
 Per-item values of the parts machines take. Most of these values only matter on an item of the part's kind: change

@@ -32,7 +32,28 @@ Internal links in page text must be relative (`../../recipes/overview/`), becaus
 
 Facts come from the mod's code. When a page and the code disagree, fix the page.
 
+## Template generator
+
+`getting-started/template-generator` downloads a datapack or addon mod project as a zip, built in the browser by
+`src/generator/generate.js` from the files in `templates/`. `scripts/templates.mjs` bundles those files into
+`public/generator/manifest.json` (git-ignored) on every build and dev start. While bundling it looks up:
+
+- the newest CurseForge files of Golem Core, NTM - Continuum and GemRender for each node, through cfwidget;
+- Golem Core's shared build scripts at that release's tag, for the addon's `gradle/golem/`;
+- NTM - Continuum's `versions/<node>/gradle.properties` at its tag, for the dependency versions.
+
+Each falls back to `templates/curseforge.json`, `templates/addon/gradle/golem/` and `templates/addon/versions/` when the
+lookup fails, so refresh those copies now and then. Template files use `{{token}}` and `{{#flag}}...{{/flag}}`
+sections; `template.json` says which files are binary, executable or tied to a flag.
+
+To build the generated projects outside the browser (an addon with every node, and a datapack for every version):
+
+```bash
+node scripts/check-templates.mjs ../template-check
+cd ../template-check/exampleaddon && ./gradlew chiseledBuild
+```
+
 ## Deploying
 
-`.github/workflows/deploy.yml` builds and deploys on every push to `main`. In the repository settings, set
-**Pages > Build and deployment > Source** to **GitHub Actions** once.
+`.github/workflows/deploy.yml` builds and deploys on every push to `main`, and daily so the template generator picks
+up new releases. In the repository settings, set **Pages > Build and deployment > Source** to **GitHub Actions** once.

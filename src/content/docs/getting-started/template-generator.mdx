@@ -1,0 +1,45 @@
+---
+title: Template generator
+description: Download a ready-to-edit datapack or addon mod project, set up with your names and target versions.
+sidebar:
+  order: 4
+---
+
+import TemplateGenerator from '../../../components/TemplateGenerator.astro';
+
+Fill in the form and download a zip with a working starting point. Everything runs in your browser; nothing is sent
+anywhere.
+
+<TemplateGenerator />
+
+## Datapack
+
+The zip is the pack: drop it into a world's `datapacks` folder as it is, or unzip it into a folder there to edit it. Its
+`pack.mcmeta` has the right format for every version you picked. Minecraft 1.21 renamed vanilla folders such as `recipes/` to `recipe/`, so a pack for
+1.20.1 and a newer version keeps the 1.20.1 spelling in `data/` and the newer one in an overlay folder,
+`overlay_1_21/data/`, which 1.21.1 and 26.1 read instead. HBM's own folders (`recipe_removals`, `value_maps` and the
+others) are named the same on every version and stay in `data/`. The pack's README says where each file goes.
+
+Continue with [Your first datapack](../../datapacks/first-datapack/).
+
+## Addon mod
+
+The zip holds a Gradle project laid out as on [Project setup](../../addons/project-setup/), for the targets you picked.
+With the example box ticked, it has the block, recipes and hook from [Your first addon mod](../../addons/first-addon/).
+The generator fills in what the setup page has you look up by hand, from the newest releases when the wiki was last
+built:
+
+- the CurseForge file ids of Golem Core, NTM - Continuum and GemRender in each `versions/<node>/gradle.properties`;
+- Golem Core's shared build scripts in `gradle/golem/`, from the same Golem Core release;
+- the per-node versions (NeoForge, Fabric API, JEI and so on) of the NTM - Continuum release it builds against.
+
+If you leave out a target, its buildscript, loader glue and metadata are left out too. The project is switched to the
+first target you picked (26.1 NeoForge when it is picked), and the source is written for that target.
+
+You need a JDK (17 or newer) to start Gradle; it downloads the Java each target needs. Then:
+
+```bash
+./gradlew chiseledBuild
+```
+
+The README in the zip lists the other tasks and how to move to a newer Golem Core or NTM - Continuum release.

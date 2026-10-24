@@ -5,9 +5,11 @@ sidebar:
   order: 4
 ---
 
-An item pool is a weighted list of items that HBM draws loot from. These are 1.7's `ItemPool` tables. They are not
-vanilla loot tables: HBM's own code and structures draw from them by name. (HBM's additions to vanilla chests, such as
-dungeon and mineshaft chests, are a separate system and are not pools.)
+An item pool is a weighted list of items that HBM draws loot from. These are 1.7's `ItemPool` tables, drawn from by name.
+Structures draw through a loot table made from each pool instead (see [Structure loot](../advancements-and-loot/#structure-loot)),
+so an edit to a pool file reaches supply drops, vending machines, satellites and keyholes, while structure loot is changed
+in its `hbm:chests/<pool>` loot table. (HBM's additions to vanilla chests, such as dungeon and mineshaft chests, are a
+separate system and are not pools.)
 
 ## Where pools are used
 
@@ -18,10 +20,10 @@ dungeon and mineshaft chests, are a separate system and are not pools.)
 | `POOL_SAT_MINER`, `POOL_SAT_LUNAR` | Mining satellite cargo (the asteroid and lunar miners) |
 | `POOL_METEORITE_TREASURE` | Meteorite treasure blocks |
 | `POOL_RED_PEDESTAL`, `POOL_BLACK_PART`, `POOL_BLACK_SLAB` | The red room keyhole pedestals |
-| `POOL_VAULT_*`, `POOL_BLUEPRINTS` | Safes and dungeon chests in HBM's world generation |
-| `POOL_FILING_CABINET`, `POOL_OFFICE_TRASH`, `POOL_MACHINE_PARTS`, `POOL_NUKE_*`, `POOL_SILO`, `POOL_VERTIBIRD`, `POOL_SPACESHIP`, `POOL_ANTENNA`, `POOL_SOLID_FUEL`, `POOL_EXPENSIVE`, `POOL_GENERIC` | Containers in HBM's structures (bunker, silo, offices, desert atom sites and others) |
-| `POOL_PILE_*` | Loose loot piles placed in structures |
-| `POOL_LAUNCH_KEY`, `POOL_REPAIR_MATERIALS`, `POOL_RTG`, `POOL_OIL_RIG`, `POOL_METEOR_SAFE` | Loot blocks inside HBM's NBT structures, which name their pool |
+| `POOL_VAULT_*`, `POOL_BLUEPRINTS` | Safes and dungeon chests in HBM's world generation (through their loot tables) |
+| `POOL_FILING_CABINET`, `POOL_OFFICE_TRASH`, `POOL_MACHINE_PARTS`, `POOL_NUKE_*`, `POOL_SILO`, `POOL_VERTIBIRD`, `POOL_SPACESHIP`, `POOL_ANTENNA`, `POOL_SOLID_FUEL`, `POOL_EXPENSIVE`, `POOL_GENERIC` | Containers in HBM's structures (bunker, silo, offices, desert atom sites and others), through their loot tables |
+| `POOL_PILE_*` | Loose loot piles placed in structures, through their loot tables |
+| `POOL_LAUNCH_KEY`, `POOL_REPAIR_MATERIALS`, `POOL_RTG`, `POOL_OIL_RIG`, `POOL_METEOR_SAFE` | Loot blocks inside HBM's NBT structures, which name their pool; through its loot table |
 
 HBM ships 50 pools. Their files, with every row, are in the NTM - Continuum jar under `data/hbm/item_pool/`.
 

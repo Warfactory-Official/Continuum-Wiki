@@ -1,8 +1,8 @@
 ---
 title: Armor and protection
-description: Radiation resistance, gas mask protection classes, Faraday armor, full armor sets and damage resistance.
+description: Radiation resistance, cladding, gas mask protection classes and blacklists, Faraday armor, full armor sets and damage resistance.
 sidebar:
-  order: 3
+  order: 4
 ---
 
 These maps hold 1.7's `HazmatRegistry`, `ArmorRegistry`, `ArmorUtil` and `DamageResistanceHandler` tables. The
@@ -46,6 +46,49 @@ classes (see [toxin](../../data/fluids/#toxin)).
 ```
 
 A gas mask's protection comes from its installed filter; the filter item is the one that needs the entry.
+
+A gas mask's own blacklist can take classes away from its filter: see [gas_mask_blacklist](#gas_mask_blacklist).
+
+## radiation_cladding
+
+`data/hbm/value_maps/item/radiation_cladding.json`. Registry: item. HBM ships 5 entries.
+
+The radiation resistance a cladding module adds to the armor piece it is installed on, added to the piece's own
+[radiation_resistance](#radiation_resistance). Value: a double. Only cladding items can be installed on armor; a cladding
+item without an entry adds nothing.
+
+```json title="data/hbm/value_maps/item/radiation_cladding.json (HBM's)"
+{
+  "values": {
+    "hbm:cladding_paint": 0.025,
+    "hbm:cladding_rubber": 0.005,
+    "hbm:cladding_lead": 0.1,
+    "hbm:cladding_desh": 0.2,
+    "hbm:cladding_ghiorsium": 0.5
+  }
+}
+```
+
+## gas_mask_blacklist
+
+`data/hbm/value_maps/item/gas_mask_blacklist.json`. Registry: item. HBM ships 6 entries.
+
+Protection classes a gas mask removes from its filter's protection, because the mask itself does not seal against them.
+Value: a list of class names, as in [protection_classes](#protection_classes). A mask without an entry keeps its filter's
+full protection. This applies to HBM's masks: the gas masks, the mask attachments and the PAA and liquidator hoods.
+
+```json title="data/hbm/value_maps/item/gas_mask_blacklist.json (HBM's)"
+{
+  "values": {
+    "hbm:gas_mask": ["GAS_BLISTERING"],
+    "hbm:gas_mask_m65": ["GAS_BLISTERING"],
+    "hbm:gas_mask_olde": ["GAS_BLISTERING"],
+    "hbm:gas_mask_mono": ["GAS_LUNG", "GAS_BLISTERING", "BACTERIA"],
+    "hbm:attachment_mask": ["GAS_BLISTERING"],
+    "hbm:attachment_mask_mono": ["GAS_LUNG", "GAS_BLISTERING", "BACTERIA"]
+  }
+}
+```
 
 ## faraday_armor
 

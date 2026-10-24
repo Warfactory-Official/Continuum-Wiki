@@ -1,0 +1,8 @@
+{
+  "binary": [],
+  "executable": [],
+  "when": {
+    "example": ["data/{{namespace}}/{{recipe}}/press/"]
+  },
+  "versionedFolders": ["data/{{namespace}}/{{recipe}}/"]
+}

@@ -2,7 +2,7 @@
 title: Fuels and containers
 description: Burner fuel classes, furnace values, fluid fuels for the autosaw and gas turbine, and fluid containers.
 sidebar:
-  order: 6
+  order: 8
 ---
 
 The [overview](../overview/) explains the file format.

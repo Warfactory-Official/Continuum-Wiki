@@ -18,6 +18,9 @@ contents change how HBM behaves. Folder names below are the 26.1 and 1.21.1 spel
 | `hbm:meteorite_replaceable` | Non-replaceable blocks a meteorite in safe mode may still overwrite. | meteorite blocks and meteor ores |
 | `hbm:fbi_breakable` | Blocks the FBI agents break through during a raid. | wooden doors and trapdoors, iron door, chests, and several HBM machines and crates |
 | `hbm:shatters_when_shot` | Blocks a bullet destroys instead of ricocheting off, if their blast resistance is low enough. | `#minecraft:impermeable` (glass) and every glass pane |
+| `hbm:radiation_resistant` | Blocks that seal radiation, like HBM's shielding blocks. See [Radiation in the world](../../data-maps/radiation/#radiation-proof-blocks). | none |
+| `hbm:legacy_stone` | Where HBM's ore veins, ore layers, strata and ore caves may place their blocks (the default `host` of those [feature types](../worldgen/)). | stone, granite, diorite, andesite, deepslate, tuff |
+| `hbm:tar_sand_hosts` | What oil sand bubbles replace. | sand, red sand |
 | `hbm:metal_fence_connects` | Extra blocks HBM's metal fences connect to, on top of other metal fences, fence gates and full solid blocks. | none |
 
 Example, letting pumps work on gravel:
@@ -31,6 +34,12 @@ Example, letting pumps work on gravel:
 
 Adding members to one of HBM's tags is the one case where a file under `data/hbm/` is right: tag files merge, so
 nothing of HBM's is lost as long as `replace` is `false`.
+
+## Entity type tags
+
+| Tag | What HBM does with it | HBM's members |
+|---|---|---|
+| `hbm:radiation_immune` | Mobs radiation does not affect. See [Radiation in the world](../../data-maps/radiation/#radiation-immune-mobs). | zombies, skeletons and their variants, mooshroom, ocelot, cat, zombie and skeleton horses, armor stand, nuclear creeper, Quackos |
 
 ## Item tags
 

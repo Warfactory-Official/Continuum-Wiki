@@ -2,7 +2,7 @@
 title: Reactor fuels
 description: Fuel values for the RBMK, PWR, ZIRNOX, Watz, Chicago Pile, RTG, betavoltaic cells, research reactor, radiation generator and ICF.
 sidebar:
-  order: 4
+  order: 6
 ---
 
 Each reactor reads its fuel values from a data map keyed by the fresh fuel item. A value only takes effect on an item

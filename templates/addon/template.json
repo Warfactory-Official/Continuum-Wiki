@@ -1,0 +1,24 @@
+{
+  "binary": ["gradle/wrapper/gradle-wrapper.jar", "src/main/resources/assets/{{modId}}/textures/blocks/example_block.png"],
+  "executable": ["gradlew"],
+  "when": {
+    "example": [
+      "src/main/java/{{packagePath}}/registry/",
+      "src/main/java/{{packagePath}}/recipe/",
+      "src/main/resources/assets/{{modId}}/textures/",
+      "src/main/resources/data/{{modId}}/recipe/"
+    ],
+    "neoforge": [
+      "build.neoforge.gradle.kts",
+      "src/main/java/{{packagePath}}/platform/neoforge/",
+      "src/main/resources/META-INF/neoforge.mods.toml"
+    ],
+    "forge": [
+      "build.forge.gradle.kts",
+      "src/main/java/{{packagePath}}/platform/forge/",
+      "src/main/resources/META-INF/mods.toml"
+    ],
+    "fabric": ["build.fabric.gradle.kts", "src/main/resources/fabric.mod.json"]
+  },
+  "nodeFolder": "versions/"
+}

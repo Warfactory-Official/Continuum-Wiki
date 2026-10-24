@@ -15,12 +15,18 @@ overview](../../data-maps/overview/) explains the file format, merging and patch
 | `hbm:cell_hazards` | `hbm/value_maps/fluid/cell_hazards.json` | fluid | hazard spec object | [Hazards](../../data-maps/hazards/#cell_hazards) |
 | `hbm:radiation_emission` | `hbm/value_maps/block/radiation_emission.json` | block | object (`radiation`, `area`) | [Hazards](../../data-maps/hazards/#radiation_emission) |
 | `hbm:radiation_resistance` | `hbm/value_maps/item/radiation_resistance.json` | item | double | [Armor](../../data-maps/armor/#radiation_resistance) |
+| `hbm:radiation_cladding` | `hbm/value_maps/item/radiation_cladding.json` | item | double | [Armor](../../data-maps/armor/#radiation_cladding) |
+| `hbm:gas_mask_blacklist` | `hbm/value_maps/item/gas_mask_blacklist.json` | item | list of class names | [Armor](../../data-maps/armor/#gas_mask_blacklist) |
+| `hbm:ambient_radiation` | `hbm/value_maps/worldgen/biome/ambient_radiation.json` | biome | object (`radiation`, `wet_multiplier`) | [Radiation in the world](../../data-maps/radiation/#ambient_radiation-biomes) |
+| `hbm:ambient_radiation` | `hbm/value_maps/dimension/ambient_radiation.json` | dimension | double (RAD/s) | [Radiation in the world](../../data-maps/radiation/#ambient_radiation-dimensions) |
+| `hbm:radiation_transformation` | `hbm/value_maps/entity_type/radiation_transformation.json` | entity type | object | [Radiation in the world](../../data-maps/radiation/#radiation_transformation) |
 | `hbm:protection_classes` | `hbm/value_maps/item/protection_classes.json` | item | list of class names | [Armor](../../data-maps/armor/#protection_classes) |
 | `hbm:faraday_armor` | `hbm/value_maps/item/faraday_armor.json` | item | boolean | [Armor](../../data-maps/armor/#faraday_armor) |
 | `hbm:armor_sets` | `hbm/value_maps/item/armor_sets.json` | item | object (set pieces, checks, resistance) | [Armor](../../data-maps/armor/#armor_sets) |
 | `hbm:damage_resistance` | `hbm/value_maps/item/damage_resistance.json` | item | resistance stats | [Armor](../../data-maps/armor/#damage_resistance-items) |
 | `hbm:damage_resistance` | `hbm/value_maps/entity_type/damage_resistance.json` | entity type | resistance stats | [Armor](../../data-maps/armor/#damage_resistance-entity-types) |
 | `hbm:lockpick_jacket` | `hbm/value_maps/item/lockpick_jacket.json` | item | boolean | [Armor](../../data-maps/armor/#lockpick_jacket) |
+| `hbm:consumable_treatment` | `hbm/value_maps/item/consumable_treatment.json` | item | object (`triggers`, `block_when_potion_sick`, `actions`) | [Consumable treatments](../../data-maps/treatments/) |
 | `hbm:rbmk_fuel` | `hbm/value_maps/item/rbmk_fuel.json` | item | object | [Reactor fuels](../../data-maps/reactor-fuels/#rbmk_fuel) |
 | `hbm:pwr_fuel` | `hbm/value_maps/item/pwr_fuel.json` | item | object | [Reactor fuels](../../data-maps/reactor-fuels/#pwr_fuel) |
 | `hbm:zirnox_fuel` | `hbm/value_maps/item/zirnox_fuel.json` | item | object | [Reactor fuels](../../data-maps/reactor-fuels/#zirnox_fuel) |

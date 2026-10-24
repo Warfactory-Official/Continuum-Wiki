@@ -3,6 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # Daily, so the template generator picks up new Golem Core and NTM - Continuum releases (scripts/templates.mjs).
+  schedule:
+    - cron: '17 4 * * *'
   workflow_dispatch:
 
 permissions:

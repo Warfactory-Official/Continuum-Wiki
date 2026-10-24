@@ -2,7 +2,7 @@
 title: World
 description: Block erosion by drill blasts, radiation decay of surface blocks, and the fluid deposits oil drills pump from.
 sidebar:
-  order: 7
+  order: 9
 ---
 
 Block-keyed maps that change what happens to the world. The [overview](../overview/) explains the file format. For

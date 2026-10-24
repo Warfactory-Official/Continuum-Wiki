@@ -25,3 +25,6 @@ src/content/docs/*/recipes/
 src/content/docs/*/data-maps/
 src/content/docs/*/data/
 src/content/docs/*/reference/
+
+# Template generator manifest, written by scripts/templates.mjs
+public/generator/

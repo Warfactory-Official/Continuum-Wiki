@@ -51,7 +51,7 @@ shape on every node, so HBM and its addons call one API and never branch on the 
 - the neutral scripting surface (`Scripts`) that its KubeJS adapter turns into KubeJS bindings,
 - GameTests that run on every loader.
 
-The shared build scripts in `Golem-Core/gradle/mod/` convert one resource tree for every node. See
+Golem Core's shared build scripts, copied into your project's `gradle/golem/`, convert one resource tree for every node. See
 [Project setup](../project-setup/).
 
 ## When an addon mod is not needed

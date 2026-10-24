@@ -316,7 +316,8 @@ register("generateData") {
 
 `golem.data.sources` takes a comma-separated list of `DataSources` classes.
 
-Then apply `../Golem-Core/gradle/mod/generated-data.gradle.kts` on **every** node. It makes `processResources` depend on
+Then copy `generated-data.gradle.kts` from Golem Core's `gradle/mod/` into your `gradle/golem/` (see
+[Project setup](../project-setup/#the-shared-build-scripts)) and apply it on **every** node. It makes `processResources` depend on
 `:26.1-neoforge:runGenerateData` and packs `build/generated/data/pack` into the resources, so nobody runs the generator by
 hand. It logs `generatedData: packed N generated file(s) in M folder(s)` and fails the build if a folder's file count
 differs from the manifest, or if an authored file sits at a generated path. Change the task or the output root with

@@ -1,0 +1,32 @@
+{
+    "schemaVersion": 1,
+    "id": "${mod_id}",
+    "version": "${mod_version}",
+    "name": "${mod_name}",
+    "description": "${mod_description}@golem.credits@",
+{{#links}}
+    "contact": {
+        "homepage": "@golem.homepage@",
+        "sources": "@golem.sources@",
+        "issues": "@golem.issues@"
+    },
+{{/links}}
+    "authors": [
+        "${mod_author}"
+    ],
+    "license": "${mod_license}",
+    "environment": "*",
+    "entrypoints": {
+        "golemcore:entry": [
+            "{{package}}.{{className}}Entry"
+        ]
+    },
+    "depends": {
+        "fabricloader": ">=${fabric_loader}",
+        "fabric-api": "*",
+        "golemcore": ">=${golemcore_floor}",
+        "hbm": ">=${hbm_floor}",
+        "minecraft": "${minecraft_range}",
+        "java": ">=${java_version}"
+    }
+}

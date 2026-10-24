@@ -11,6 +11,11 @@ same as the original, so item, block and fluid ids look like `hbm:ingot_uranium`
 The behaviour target is 1.7: recipes, formulas, machine values and hazards follow the 1.7.10 code. Where this wiki
 says "1.7", it means that original behaviour.
 
+:::tip[Start from a template]
+The [template generator](../template-generator/) downloads a ready-to-edit datapack or addon mod project, set up with
+your names and the Minecraft versions and loaders you pick.
+:::
+
 ## Supported targets
 
 One source tree is built into six jars:

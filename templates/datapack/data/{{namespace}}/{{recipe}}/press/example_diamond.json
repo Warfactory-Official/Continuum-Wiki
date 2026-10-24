@@ -1,0 +1,6 @@
+{
+  "type": "hbm:press",
+  "stamp": "flat",
+  "input": { "ingredient": "minecraft:gold_block" },
+  "output": "minecraft:diamond"
+}

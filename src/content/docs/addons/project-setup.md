@@ -1,53 +1,56 @@
 ---
 title: Project setup
-description: "The files an addon mod project needs to build for all six NTM - Continuum nodes, trimmed from NTM: Space's build."
+description: "The files an addon mod project needs to build for all six NTM - Continuum nodes, with Golem Core and NTM - Continuum from CurseForge."
 sidebar:
   order: 2
 ---
 
-This page lists every file an addon mod project needs before it has any content, with contents trimmed from NTM: Space's
-build ([NTM-Continuum-Space](https://github.com/Warfactory-Official/NTM-Continuum-Space)). Copying that project and
-renaming it is the fastest start; this page explains what each part does and what you can leave out. When the files are
-in place, continue with [Your first addon mod](../first-addon/).
+This page lists every file an addon mod project needs before it has any content. The build is NTM: Space's
+([NTM-Continuum-Space](https://github.com/Warfactory-Official/NTM-Continuum-Space)), trimmed, with Golem Core,
+NTM - Continuum and GemRender taken from CurseForge through [CurseMaven](https://www.cursemaven.com/). The project builds
+on its own: no other checkout is needed. When the files are in place, continue with
+[Your first addon mod](../first-addon/).
+
+:::tip[Skip the setup]
+The [template generator](../../getting-started/template-generator/) downloads a project with every file on this page,
+named and set up for the targets you pick, with the newest CurseForge files already filled in.
+:::
 
 ## Directory layout
 
-Clone Golem Core, NTM - Continuum and your addon side by side. The builds find each other by relative path.
-
 ```text
-workspace/
-  Golem-Core/        https://github.com/Warfactory-Official/Golem-Core
-  new-hbm/           https://github.com/Warfactory-Official/NTM-Continuum
-  my-addon/
-    settings.gradle.kts
-    stonecutter.gradle.kts
-    gradle.properties
-    build.neoforge.gradle.kts
-    build.fabric.gradle.kts
-    build.forge.gradle.kts
-    gradlew, gradlew.bat, gradle/wrapper/     copied from NTM: Space
-    gradle/
-      dejson-classes.txt
-      dejson-authored.txt
-    versions/
-      26.1-neoforge/gradle.properties
-      26.1-fabric/gradle.properties
-      1.21.1-neoforge/gradle.properties
-      1.21.1-fabric/gradle.properties
-      1.20.1-forge/gradle.properties
-      1.20.1-fabric/gradle.properties
-    src/
-      main/java/        one source tree for every node
-      main/resources/   one resource tree for every node
-      recipes/java/     data written in Java, not shipped (optional)
+my-addon/
+  settings.gradle.kts
+  stonecutter.gradle.kts
+  gradle.properties
+  build.neoforge.gradle.kts
+  build.fabric.gradle.kts
+  build.forge.gradle.kts
+  gradlew, gradlew.bat, gradle/wrapper/     copied from NTM: Space
+  gradle/
+    dejson-classes.txt
+    dejson-authored.txt
+    golem/            Golem Core's shared build scripts
+  versions/
+    26.1-neoforge/gradle.properties
+    26.1-fabric/gradle.properties
+    1.21.1-neoforge/gradle.properties
+    1.21.1-fabric/gradle.properties
+    1.20.1-forge/gradle.properties
+    1.20.1-fabric/gradle.properties
+  src/
+    main/java/        one source tree for every node
+    main/resources/   one resource tree for every node
+    recipes/java/     data written in Java, not shipped (optional)
 ```
 
-The folder names `Golem-Core` and `new-hbm` matter: the build scripts below refer to `../Golem-Core` and `../new-hbm`.
+`gradle/golem/` holds Golem Core's shared build scripts (see [The shared build scripts](#the-shared-build-scripts)). Copy
+them from `gradle/mod/` of [Golem Core](https://github.com/Warfactory-Official/Golem-Core) at the tag of the release you
+build against (`v1.0.1`), so the scripts match the jar.
 
 ## settings.gradle.kts
 
-Stonecutter declares the six nodes. Golem Core and HBM are composite builds, so edits to them are picked up with no
-publish step: each node's Maven artifact is replaced by the upstream project of the same node.
+Stonecutter declares the six nodes. Leave out a `match` line, or a loader in one, to drop a node.
 
 ```kotlin title="settings.gradle.kts"
 pluginManagement {
@@ -80,29 +83,17 @@ stonecutter {
 }
 
 rootProject.name = "myaddon"
-
-val nodes = listOf("26.1-fabric", "26.1-neoforge", "1.21.1-fabric", "1.21.1-neoforge", "1.20.1-fabric", "1.20.1-forge")
-
-includeBuild("../Golem-Core") {
-    dependencySubstitution {
-        nodes.forEach { node ->
-            val (mc, loader) = node.split('-', limit = 2)
-            substitute(module("dev.golem:golemcore-$loader-$mc")).using(project(":$node"))
-        }
-    }
-}
-
-includeBuild("../new-hbm") {
-    dependencySubstitution {
-        nodes.forEach { node ->
-            val (mc, loader) = node.split('-', limit = 2)
-            substitute(module("com.hbm:hbm-$loader-$mc")).using(project(":$node"))
-        }
-    }
-}
 ```
 
-`loom-back-compat` picks the right Fabric Loom variant per node (obfuscated below 26.1).
+`loom-back-compat` picks the right Fabric Loom variant per node (obfuscated below 26.1). `vcsVersion` must be a node you
+build; the source tree is committed in that node's state.
+
+:::note[Changing Golem Core or HBM at the same time]
+NTM: Space builds against local checkouts of Golem Core and NTM - Continuum instead, as Gradle composite builds
+(`includeBuild("../Golem-Core")` with a dependency substitution per node, in its
+[settings.gradle.kts](https://github.com/Warfactory-Official/NTM-Continuum-Space/blob/main/settings.gradle.kts)). Do the
+same only when you change those projects together with your addon; otherwise the CurseForge jars are simpler.
+:::
 
 ## stonecutter.gradle.kts
 
@@ -120,6 +111,11 @@ stonecutter active "26.1-neoforge" /* [SC] DO NOT EDIT */
 tasks.register("chiseledBuild") {
     group = "build"
     dependsOn(stonecutter.tasks.named("build"))
+}
+
+tasks.register("publishAllMods") {
+    group = "publishing"
+    dependsOn(stonecutter.tasks.named("publishMods"))
 }
 
 stonecutter parameters {
@@ -142,8 +138,8 @@ versions belongs in Golem Core, not in your addon mod.
 
 ## gradle.properties
 
-The root file holds the mod identity, the upstream versions, the `golem.build.*` parameters for the shared scripts, and a
-`[VERSIONED]` placeholder for every key a node file sets.
+The root file holds the mod identity, the oldest Golem Core and HBM versions your metadata accepts, the `golem.build.*`
+parameters for the shared scripts, and a `[VERSIONED]` placeholder for every key all node files set.
 
 ```properties title="gradle.properties"
 org.gradle.jvmargs=-Xmx3G -XX:+UseG1GC -Dfile.encoding=UTF-8
@@ -156,31 +152,41 @@ mod.group=com.example.myaddon
 mod.version=0.1.0
 mod.author=You
 mod.license=LGPL-3.0
+mod.homepage=
+mod.sources=
+mod.issues=
 mod.credits=
 mod.description=An addon for NTM - Continuum.
 
-deps.golemcore=0.1.0
-deps.hbm=0.1.0
+# The lowest Golem Core and NTM - Continuum versions the mod metadata accepts.
+deps.golemcore_floor=1.0.1
+deps.hbm_floor=1.0.1
 
 golem.build.dejson.classes=gradle/dejson-classes.txt
 golem.build.dejson.authored=gradle/dejson-authored.txt
+golem.build.releaseJar.testPackages=com/example/myaddon/gametest/
 
 deps.minecraft=[VERSIONED]
 deps.minecraft_range=[VERSIONED]
 java_version=[VERSIONED]
 pack_format=[VERSIONED]
+deps.golemcore=[VERSIONED]
+deps.hbm=[VERSIONED]
+deps.gemrender=[VERSIONED]
 deps.fabric_loader=[VERSIONED]
 deps.fabric_api=[VERSIONED]
 deps.neoforge=[VERSIONED]
 deps.neoforge_loader_range=[VERSIONED]
 deps.forge=[VERSIONED]
 deps.forge_loader_range=[VERSIONED]
-deps.jei_mc=[VERSIONED]
-deps.jei=[VERSIONED]
-deps.lwjgl=[VERSIONED]
 
 loomx.loom_version=1.16.3
 ```
+
+Keys only some nodes set (`deps.jei`, `deps.gemrender_flywheel`, `deps.neoforge_floor`, `deps.lwjgl`) get no
+placeholder: a node that does not set one would read the text `[VERSIONED]`. `golem.build.releaseJar.testPackages` names
+the package `release-jar` strips from the uploaded jar, and must be set even before you have GameTests. The
+`mod.homepage`, `mod.sources` and `mod.issues` links fill the metadata (see [Mod metadata](#mod-metadata)).
 
 NTM: Space also sets these, needed only if you use HBM's item-model vocabulary (`hbm:machine_obj`, `hbm:custom_item`,
 `hbm:model_state`) or smelting recipes whose result carries a count or components:
@@ -194,8 +200,10 @@ golem.build.legacyAssets.selectProperties=hbm:model_state
 
 ## versions/&lt;node&gt;/gradle.properties
 
-Each node's file holds only that node's dependency versions. Keep them equal to HBM's file for the same node, since the
-addon mod runs on that HBM node. NTM: Space's values:
+Each node's file holds that node's dependency versions and the CurseForge files of Golem Core, NTM - Continuum and
+GemRender. Keep the versions equal to HBM's file for the same node, at the release you build against
+([versions/](https://github.com/Warfactory-Official/NTM-Continuum/tree/main/versions)), since the addon mod runs on that HBM
+node. The values for NTM - Continuum 1.0.1:
 
 | Key | 26.1 NeoForge | 26.1 Fabric | 1.21.1 NeoForge | 1.21.1 Fabric | 1.20.1 Forge | 1.20.1 Fabric |
 |---|---|---|---|---|---|---|
@@ -206,12 +214,29 @@ addon mod runs on that HBM node. NTM: Space's values:
 | loader | `deps.neoforge=26.1.2.114` | `deps.fabric_loader=0.19.5` | `deps.neoforge=21.1.248` | `deps.fabric_loader=0.19.5` | `deps.forge=1.20.1-47.2.30` | `deps.fabric_loader=0.19.5` |
 | loader range / API | `deps.neoforge_loader_range=[4,)` | `deps.fabric_api=0.155.3+26.1.2` | `deps.neoforge_loader_range=[4,)` | `deps.fabric_api=0.116.17+1.21.1` | `deps.forge_loader_range=[47,)` | `deps.fabric_api=0.92.12+1.20.1` |
 | `deps.jei_mc` / `deps.jei` | `26.1.2` / `29.43.0.107` | `26.1.2` / `29.43.0.107` | `1.21.1` / `19.44.0.401` | `1.21.1` / `19.44.0.401` | `1.20.1` / `15.49.0.188` | `1.20.1` / `15.49.0.188` |
+| `deps.golemcore` | `9302757` | `9302756` | `9302755` | `9302752` | `9302754` | `9302753` |
+| `deps.hbm` | `9302876` | `9302877` | `9302870` | `9302867` | `9302869` | `9302871` |
+| `deps.gemrender` | `9302431` | `9302432` | `9302429` | `9302430` | `9302428` | `9302427` |
 
-1.20.1 Fabric also sets `deps.lwjgl=3.3.1`; the other Fabric nodes leave it blank. 26.1 NeoForge sets
-`deps.neoforge_floor=26.1.2.109`, the oldest NeoForge the released jar accepts (see
-[Scripting surface](../scripting-surface/#dev-runs)). JEI is optional: leave `deps.jei` blank to build without it.
+`deps.golemcore`, `deps.hbm` and `deps.gemrender` are CurseForge file ids: the number at the end of a file's page on
+[Golem Core](https://www.curseforge.com/minecraft/mc-mods/golem-core/files/all),
+[NTM - Continuum](https://www.curseforge.com/minecraft/mc-mods/ntm-continuum/files/all) or
+[GemRender](https://www.curseforge.com/minecraft/mc-mods/gemrender/files/all). Pick the file for the node's Minecraft
+version and loader. The ids above are Golem Core 1.0.1, NTM - Continuum 1.0.1 and GemRender 0.1.18. When you move to a
+newer release, also raise `deps.golemcore_floor` and `deps.hbm_floor`, and copy that Golem Core release's scripts into
+`gradle/golem/`.
+
+1.20.1 Fabric also sets `deps.lwjgl=3.3.1`; the other Fabric nodes leave it blank. 1.21.1 Fabric and 1.20.1 Fabric set
+`deps.gemrender_flywheel` (`1.0.6` and `1.0.6-281`): GemRender's 1.x Fabric jar nests Flywheel, which a Loom dev run does
+not load, so the dev run adds it beside it. 26.1 NeoForge sets `deps.neoforge_floor=26.1.2.109`, the oldest NeoForge the
+released jar accepts (see [Scripting surface](../scripting-surface/#dev-runs)). JEI is optional: leave `deps.jei` blank to
+build without it.
 
 ```properties title="versions/1.21.1-neoforge/gradle.properties"
+deps.golemcore=9302755
+deps.hbm=9302870
+deps.gemrender=9302429
+
 deps.minecraft=1.21.1
 deps.minecraft_range=[1.21.1, 1.22)
 java_version=21
@@ -228,14 +253,18 @@ There is one buildscript per loader; Stonecutter runs it once per node of that l
 
 1. sets the Java toolchain from `java_version` (26.1 on Java 25, 1.21.1 on 21, 1.20.1 on 17);
 2. excludes the other loaders' `platform` packages from the main source set;
-3. depends on Golem Core and HBM by their Maven coordinates (the composite build substitutes the projects);
+3. depends on Golem Core and HBM through CurseMaven (`curse.maven:<slug>-<project id>:<file id>`), and puts GemRender in
+   the dev client run;
 4. fills the `${...}` placeholders in the metadata files and excludes the other loaders' metadata;
 5. makes `compileJava` and `processResources` (and on NeoForge `createMinecraftArtifacts`) depend on
    `stonecutterGenerate`, or they read the previous node's source;
-6. applies Golem Core's shared scripts.
+6. applies Golem Core's shared scripts from `gradle/golem/`.
 
 Running a node on the wrong Java fails in confusing ways: a 1.21.1 NeoForge client on Java 25 dies with
 `ClassNotFoundException: java.lang.Boolean`. `run-toolchain.gradle.kts` pins every run task to the node's Java.
+
+GemRender is optional for players and only in the dev client run. Add `-Pgemrender.run=false` to launch without it, as a
+player without GemRender would.
 
 ### build.neoforge.gradle.kts
 
@@ -283,13 +312,30 @@ neoForge {
 repositories {
     mavenCentral()
     maven("https://maven.blamejared.com") { name = "BlameJared" }
+    exclusiveContent {
+        forRepository { maven("https://cursemaven.com") { name = "CurseMaven" } }
+        filter { includeGroup("curse.maven") }
+    }
 }
 
+// GemRender carries mixins, so it goes in the client run's mods folder: FML registers a classpath jar's code but not its
+// mixin configs.
+val devModJar: Configuration by configurations.creating
+
 dependencies {
-    implementation("dev.golem:golemcore-neoforge-$mcVersion:${prop("deps.golemcore")}+$mcVersion")
-    implementation("com.hbm:hbm-neoforge-$mcVersion:${prop("deps.hbm")}+$mcVersion")
+    implementation("curse.maven:golem-core-1719361:${prop("deps.golemcore")}")
+    implementation("curse.maven:ntm-continuum-1719328:${prop("deps.hbm")}")
+    if (propOrNull("gemrender.run") != "false") {
+        propOrNull("deps.gemrender")?.let { devModJar("curse.maven:gemrender-1735539:$it") }
+    }
     compileOnly("org.jspecify:jspecify:1.0.0")
 }
+
+val syncDevMods = tasks.register<Sync>("syncDevMods") {
+    from(devModJar)
+    into(layout.projectDirectory.dir("runs/client/mods"))
+}
+tasks.matching { it.name == "runClient" || it.name == "prepareClientRun" }.configureEach { dependsOn(syncDevMods) }
 
 val modProps = mapOf(
     "mod_id" to modId,
@@ -297,11 +343,13 @@ val modProps = mapOf(
     "mod_version" to prop("mod.version"),
     "mod_author" to prop("mod.author"),
     "mod_license" to prop("mod.license"),
-    "mod_credits" to prop("mod.credits"),
     "mod_description" to prop("mod.description"),
     "minecraft_range" to prop("deps.minecraft_range"),
     "neoforge_version" to neoforgeFloor,
     "neoforge_loader_range" to prop("deps.neoforge_loader_range"),
+    "golemcore_floor" to prop("deps.golemcore_floor"),
+    "hbm_floor" to prop("deps.hbm_floor"),
+    "java_version" to javaVersion.toString(),
     "pack_format_entry" to if (mcVersion.substringBefore('.').toInt() >= 26)
         "\"min_format\": ${prop("pack_format")}, \"max_format\": ${prop("pack_format")}"
     else
@@ -311,7 +359,7 @@ val modProps = mapOf(
 tasks.processResources {
     inputs.properties(modProps)
     filesMatching(listOf("META-INF/neoforge.mods.toml", "pack.mcmeta")) { expand(modProps) }
-    exclude("fabric.mod.json", "META-INF/mods.toml")
+    exclude("fabric.mod.json", "META-INF/mods.toml", "data/$modId/forge/**")
 }
 
 tasks.named("createMinecraftArtifacts") { dependsOn(tasks.named("stonecutterGenerate")) }
@@ -325,20 +373,26 @@ tasks.matching { it.name == "runGameTestServer" }.configureEach {
 extra["mc_version"] = mcVersion
 extra["java_version"] = javaVersion.toString()
 extra["loader_cooking_result_count"] = true
-apply(from = rootProject.file("../Golem-Core/gradle/mod/run-toolchain.gradle.kts"))
-apply(from = rootProject.file("../Golem-Core/gradle/mod/legacy-recipes.gradle.kts"))
+apply(from = rootProject.file("gradle/golem/run-toolchain.gradle.kts"))
+apply(from = rootProject.file("gradle/golem/legacy-recipes.gradle.kts"))
 extra["loader"] = "neoforge"
-apply(from = rootProject.file("../Golem-Core/gradle/mod/kubejs-order.gradle.kts"))
-apply(from = rootProject.file("../Golem-Core/gradle/mod/recipe-conditions.gradle.kts"))
-apply(from = rootProject.file("../Golem-Core/gradle/mod/legacy-biomes.gradle.kts"))
-apply(from = rootProject.file("../Golem-Core/gradle/mod/legacy-dimensions.gradle.kts"))
-apply(from = rootProject.file("../Golem-Core/gradle/mod/legacy-assets.gradle.kts"))
-apply(from = rootProject.file("../Golem-Core/gradle/mod/dejson.gradle.kts"))
-apply(from = rootProject.file("../Golem-Core/gradle/mod/mixin-validation.gradle.kts"))
+apply(from = rootProject.file("gradle/golem/recipe-conditions.gradle.kts"))
+apply(from = rootProject.file("gradle/golem/legacy-biomes.gradle.kts"))
+apply(from = rootProject.file("gradle/golem/legacy-dimensions.gradle.kts"))
+apply(from = rootProject.file("gradle/golem/legacy-assets.gradle.kts"))
+// Dejson fails on an empty class list, so it is applied once gradle/dejson-classes.txt names a class.
+if (rootProject.file("gradle/dejson-classes.txt").readLines().any { it.isNotBlank() && !it.trimStart().startsWith("#") }) {
+    apply(from = rootProject.file("gradle/golem/dejson.gradle.kts"))
+}
+apply(from = rootProject.file("gradle/golem/mixin-validation.gradle.kts"))
+apply(from = rootProject.file("gradle/golem/release-jar.gradle.kts"))
+apply(from = rootProject.file("gradle/golem/mod-metadata.gradle.kts"))
+apply(from = rootProject.file("gradle/golem/publish.gradle.kts"))
 ```
 
-NTM: Space's file adds JEI (`compileOnly` API jars, the full jar as a dev-only runtime mod), the dev-only probe addon's
-source set, KubeJS dev runs (`-Pkubejs.run=true`), the publish script, and the data generator (below).
+Golem Core and HBM go on the plain classpath: their own mixin configs are still applied there. NTM: Space's file adds JEI
+(`compileOnly` API jars, the full jar as a dev-only runtime mod), the dev-only probe addon's source set, KubeJS dev runs
+(`-Pkubejs.run=true`) and the data generator (below).
 
 ### build.fabric.gradle.kts
 
@@ -368,10 +422,21 @@ sourceSets["main"].java {
     exclude("com/example/myaddon/platform/neoforge/**", "com/example/myaddon/platform/forge/**")
 }
 
-repositories { mavenCentral() }
+repositories {
+    mavenCentral()
+    maven("https://maven.createmod.net") {
+        name = "CreateMod"
+        content { includeGroup("dev.engine-room.flywheel") }
+    }
+    exclusiveContent {
+        forRepository { maven("https://cursemaven.com") { name = "CurseMaven" } }
+        filter { includeGroup("curse.maven") }
+    }
+}
 
 val obfuscated = mcVersion.substringBefore('.').toInt() < 26
 val modCfg = if (obfuscated) "modImplementation" else "implementation"
+val devRuntime = if (obfuscated) "modLocalRuntime" else "localRuntime"
 
 // LWJGL pinned to what 1.20.1 ships
 propOrNull("deps.lwjgl")?.let { pinned ->
@@ -380,18 +445,18 @@ propOrNull("deps.lwjgl")?.let { pinned ->
     }
 }
 
-extra["mc_version"] = mcVersion
-extra["golem.build.composite.roots"] = "../Golem-Core=dev/golem,../new-hbm=com/hbm"
-apply(from = rootProject.file("../Golem-Core/gradle/mod/composite-freshness.gradle.kts"))
-
 dependencies {
     "minecraft"("com.mojang:minecraft:${prop("deps.minecraft")}")
     if (obfuscated) "mappings"(loom.officialMojangMappings())
     modCfg("net.fabricmc:fabric-loader:${prop("deps.fabric_loader")}")
     modCfg("net.fabricmc.fabric-api:fabric-api:${prop("deps.fabric_api")}")
-    modCfg("dev.golem:golemcore-fabric-$mcVersion:${prop("deps.golemcore")}+$mcVersion")
-    modCfg("com.hbm:hbm-fabric-$mcVersion:${prop("deps.hbm")}+$mcVersion")
-    compileOnly("org.jspecify:jspecify:1.0.0")
+    modCfg("curse.maven:golem-core-1719361:${prop("deps.golemcore")}")
+    modCfg("curse.maven:ntm-continuum-1719328:${prop("deps.hbm")}")
+    if (propOrNull("gemrender.run") != "false") {
+        propOrNull("deps.gemrender")?.let { devRuntime("curse.maven:gemrender-1735539:$it") }
+        propOrNull("deps.gemrender_flywheel")?.let { devRuntime("dev.engine-room.flywheel:flywheel-fabric-$mcVersion:$it") }
+    }
+    "compileOnly"("org.jspecify:jspecify:1.0.0")
 }
 
 loom {
@@ -413,9 +478,11 @@ val modProps = mapOf(
     "mod_version" to prop("mod.version"),
     "mod_author" to prop("mod.author"),
     "mod_license" to prop("mod.license"),
-    "mod_description" to prop("mod.description"),
+    "mod_description" to prop("mod.description").replace("\n", "\\n"),
     "minecraft_range" to prop("deps.minecraft_range"),
     "fabric_loader" to prop("deps.fabric_loader"),
+    "golemcore_floor" to prop("deps.golemcore_floor"),
+    "hbm_floor" to prop("deps.hbm_floor"),
     "java_version" to javaVersion.toString(),
     "pack_format_entry" to if (!obfuscated)
         "\"min_format\": ${prop("pack_format")}, \"max_format\": ${prop("pack_format")}"
@@ -426,7 +493,8 @@ val modProps = mapOf(
 tasks.processResources {
     inputs.properties(modProps)
     filesMatching(listOf("fabric.mod.json", "pack.mcmeta")) { expand(modProps) }
-    exclude("META-INF/mods.toml", "META-INF/neoforge.mods.toml", "data/neoforge/**")
+    exclude("META-INF/mods.toml", "META-INF/neoforge.mods.toml", "data/$modId/neoforge/**", "data/$modId/forge/**",
+        "data/neoforge/**")
 }
 
 tasks.compileJava {
@@ -439,20 +507,16 @@ tasks.matching { it.name == "runGametest" }.configureEach {
     doFirst { delete(layout.projectDirectory.dir("runs/gametest/world")) }
 }
 
+extra["mc_version"] = mcVersion
 extra["java_version"] = javaVersion.toString()
-apply(from = rootProject.file("../Golem-Core/gradle/mod/run-toolchain.gradle.kts"))
-apply(from = rootProject.file("../Golem-Core/gradle/mod/legacy-recipes.gradle.kts"))
+apply(from = rootProject.file("gradle/golem/run-toolchain.gradle.kts"))
+apply(from = rootProject.file("gradle/golem/legacy-recipes.gradle.kts"))
 extra["loader"] = "fabric"
-apply(from = rootProject.file("../Golem-Core/gradle/mod/recipe-conditions.gradle.kts"))
-apply(from = rootProject.file("../Golem-Core/gradle/mod/legacy-biomes.gradle.kts"))
-apply(from = rootProject.file("../Golem-Core/gradle/mod/legacy-dimensions.gradle.kts"))
-apply(from = rootProject.file("../Golem-Core/gradle/mod/legacy-assets.gradle.kts"))
-apply(from = rootProject.file("../Golem-Core/gradle/mod/dejson.gradle.kts"))
-apply(from = rootProject.file("../Golem-Core/gradle/mod/mixin-validation.gradle.kts"))
+// then the same apply(...) lines as NeoForge, from recipe-conditions on
 ```
 
-`composite-freshness.gradle.kts` goes before the `dependencies` block: it stops Loom from compiling against a stale remap
-of an edited upstream jar. The Fabric file applies no `kubejs-order` script.
+The Fabric file applies no `kubejs-order` script. `extra["mc_version"]` must be set on every loader: `legacy-recipes`
+reads it, and Gradle configures every node's buildscript even when you build one.
 
 ### build.forge.gradle.kts
 
@@ -474,8 +538,11 @@ legacyForge {
 }
 
 dependencies {
-    modImplementation("dev.golem:golemcore-forge-$mcVersion:${prop("deps.golemcore")}+$mcVersion")
-    modImplementation("com.hbm:hbm-forge-$mcVersion:${prop("deps.hbm")}+$mcVersion")
+    modImplementation("curse.maven:golem-core-1719361:${prop("deps.golemcore")}")
+    modImplementation("curse.maven:ntm-continuum-1719328:${prop("deps.hbm")}")
+    if (propOrNull("gemrender.run") != "false") {
+        propOrNull("deps.gemrender")?.let { modRuntimeOnly("curse.maven:gemrender-1735539:$it") }
+    }
     compileOnly("org.jspecify:jspecify:1.0.0")
 }
 
@@ -484,7 +551,7 @@ dependencies {
 tasks.processResources {
     inputs.properties(modProps)
     filesMatching(listOf("META-INF/mods.toml", "pack.mcmeta")) { expand(modProps) }
-    exclude("fabric.mod.json", "META-INF/neoforge.mods.toml", "data/neoforge/**")
+    exclude("fabric.mod.json", "META-INF/neoforge.mods.toml", "data/$modId/neoforge/**", "data/neoforge/**")
 }
 
 extra["mc_version"] = mcVersion
@@ -493,14 +560,17 @@ extra["convention_namespace"] = "forge"
 // then the same apply(...) lines as NeoForge, with extra["loader"] = "forge"
 ```
 
-There is no `createMinecraftArtifacts` task and no `loader_cooking_result_count` on Forge. `convention_namespace` makes
-the shared scripts use Forge 1.20.1's `forge:` convention tags in converted recipes and biome tags. NTM: Space's Forge GameTest run also writes
-`level-type=minecraft:flat` into its `server.properties` before each run, so every run starts from an empty flat world.
+The CurseForge Forge jars are reobfuscated, so `modImplementation` remaps them, as Loom does on Fabric below 26.1. There
+is no `createMinecraftArtifacts` task and no `loader_cooking_result_count` on Forge. `convention_namespace` makes the shared
+scripts use Forge 1.20.1's `forge:` convention tags in converted recipes and biome tags. NTM: Space's Forge GameTest run
+also writes `level-type=minecraft:flat` into its `server.properties` before each run, so every run starts from an empty
+flat world.
 
 ## The shared build scripts
 
-Each loader buildscript applies Golem Core's scripts from `../Golem-Core/gradle/mod/`, after setting the `extra` values
-they read (`mc_version`, `java_version`, `loader`).
+Each loader buildscript applies Golem Core's scripts from `gradle/golem/`, after setting the `extra` values they read
+(`mc_version`, `java_version`, `loader`). They are copies of `gradle/mod/` in Golem Core; keep them at the release your
+`deps.golemcore` files come from.
 
 | Script | Does | Parameters (`golem.build.*`) |
 |---|---|---|
@@ -513,31 +583,35 @@ they read (`mc_version`, `java_version`, `loader`).
 | `dejson` | writes declared models, blockstates, loot, tags and recipes; adds `dejsonVerify` and `dejsonOwnership` | `dejson.classes`, `dejson.authored`, `dejson.unownedFolders` |
 | `generated-data` | packs data generated from Java (see [Recipes and data](../recipes-and-data/#build-wiring)) | `generatedData.generator`, `generatedData.root` |
 | `mixin-validation` | fails `check` if a mixin config names a missing class | none |
-| `kubejs-order` (NeoForge, Forge) | orders your mod before KubeJS in the mod metadata | none |
-| `composite-freshness` (Fabric) | refreshes Loom's remap of upstream jars | `composite.roots` |
-| `publish` | uploads release jars to Modrinth and CurseForge | `publish.*` |
+| `release-jar` | writes the uploaded jar without GameTests to `build/release/` | `releaseJar.testPackages` (required), `releaseJar.testResources`, `releaseJar.testAssets` |
+| `mod-metadata` | fills the `@golem.*@` links and credits in the metadata files | none (reads `mod.*`) |
+| `publish` | uploads release jars to Modrinth and CurseForge (`publishAllMods`) | `publish.*` |
+| `kubejs-order` (NeoForge, Forge) | orders your mod before KubeJS in the mod metadata, when the node sets `deps.kubejs` | none |
 
-Apply `generated-data` only once your 26.1 NeoForge buildscript declares the `runGenerateData` task it depends on (see
-[Recipes and data](../recipes-and-data/#build-wiring)); without it, the build fails. Each script logs a count of what it
-converted. Read it after a change: a missing line means the script did nothing.
+`dejson` fails when its class list names no class, which is why the buildscripts apply it only once
+`gradle/dejson-classes.txt` names one. Apply `generated-data` only once your 26.1 NeoForge buildscript declares the
+`runGenerateData` task it depends on (see [Recipes and data](../recipes-and-data/#build-wiring)); without it, the build
+fails. Each script logs a count of what it converted. Read it after a change: a missing line means the script did
+nothing.
 
 ## Mod metadata
 
-Declare `golemcore` and `hbm` as required dependencies. On NeoForge and Forge order your mod **after** both, so your
-start-up phases run after theirs.
+Declare `golemcore` and `hbm` as required dependencies, from the floors in `gradle.properties`. On NeoForge and Forge
+order your mod **after** both, so your start-up phases run after theirs.
 
 ```toml title="src/main/resources/META-INF/neoforge.mods.toml"
 modLoader = "javafml"
 loaderVersion = "${neoforge_loader_range}"
 license = "${mod_license}"
+issueTrackerURL = "@golem.issues@"
 
 [[mods]]
 modId = "${mod_id}"
 version = "${mod_version}"
 displayName = "${mod_name}"
-credits = "${mod_credits}"
+displayURL = "@golem.homepage@"
 authors = "${mod_author}"
-description = '''${mod_description}'''
+description = '''${mod_description}@golem.credits@'''
 
 [[dependencies.${mod_id}]]
 modId = "neoforge"
@@ -549,14 +623,14 @@ side = "BOTH"
 [[dependencies.${mod_id}]]
 modId = "golemcore"
 type = "required"
-versionRange = "[0.1.0,)"
+versionRange = "[${golemcore_floor},)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.${mod_id}]]
 modId = "hbm"
 type = "required"
-versionRange = "[0.1.0,)"
+versionRange = "[${hbm_floor},)"
 ordering = "AFTER"
 side = "BOTH"
 
@@ -567,6 +641,9 @@ versionRange = "${minecraft_range}"
 ordering = "NONE"
 side = "BOTH"
 ```
+
+`mod-metadata` replaces the `@golem.*@` tokens with `mod.homepage`, `mod.issues` and `mod.credits`. Leave out the
+`issueTrackerURL` and `displayURL` lines while those properties are blank: an empty URL there is not a valid link.
 
 Forge 1.20.1 reads `META-INF/mods.toml`: the same file with `loaderVersion = "${forge_loader_range}"`, a `forge`
 dependency (`versionRange = "${forge_loader_range}"`) in place of `neoforge`, and `mandatory = true` in place of
@@ -581,7 +658,7 @@ On Fabric, list your `ModEntry` under `golemcore:entry` (not `main`) and depend 
   "id": "${mod_id}",
   "version": "${mod_version}",
   "name": "${mod_name}",
-  "description": "${mod_description}",
+  "description": "${mod_description}@golem.credits@",
   "authors": ["${mod_author}"],
   "license": "${mod_license}",
   "environment": "*",
@@ -591,14 +668,15 @@ On Fabric, list your `ModEntry` under `golemcore:entry` (not `main`) and depend 
   "depends": {
     "fabricloader": ">=${fabric_loader}",
     "fabric-api": "*",
-    "golemcore": "*",
-    "hbm": "*",
+    "golemcore": ">=${golemcore_floor}",
+    "hbm": ">=${hbm_floor}",
     "minecraft": "${minecraft_range}",
     "java": ">=${java_version}"
   }
 }
 ```
 
+With a homepage, add `"contact": {"homepage": "@golem.homepage@", "sources": "@golem.sources@", "issues": "@golem.issues@"}`.
 Add a `client` entrypoint for client set-up, and a `fabric-gametest` entrypoint for GameTests below 26.1 (see
 [Mod entry](../mod-entry/#fabric) and [Testing](../testing/#registering-per-loader)).
 
@@ -634,12 +712,15 @@ start empty (comments start with `#`). See
 
 ## Building
 
+You need a JDK (17 or newer) to start Gradle; the toolchain resolver downloads the Java each node needs.
+
 ```bash
 ./gradlew :26.1-neoforge:compileJava   # fastest check of the active node
 ./gradlew :26.1-neoforge:runClient
 ./gradlew chiseledBuild                # every node
-./gradlew "Reset active project"       # back to 26.1 NeoForge before committing
+./gradlew "Reset active project"       # back to the vcsVersion node before committing
 ```
 
-Stonecutter rewrites `src/` in place for the active node. Commit only with the `vcsVersion` node (26.1 NeoForge)
-active.
+Jars land in `versions/<node>/build/libs/`; the copies without GameTests, for uploading, in
+`versions/<node>/build/release/`. Stonecutter rewrites `src/` in place for the active node. Commit only with the
+`vcsVersion` node active.

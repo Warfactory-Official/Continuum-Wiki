@@ -128,6 +128,7 @@ HbmEvents.EXPLOSION.register(event -> LOG.info("{} blast of {} at {} {} {}", eve
 | Hook | Listener | Does |
 |---|---|---|
 | `TileEntityMachineFrackingTower.BLIGHT` | `Verdict blight(ServerLevel level, BlockPos tower, BlockPos deposit, DepositDataMaps.Deposit kind)` | first non-`PASS`; `DENY` replaces 1.7's oil spot around the tower |
+| `ContaminationUtil.RAD_IMMUNE` | `Verdict apply(Entity entity)` | first non-`PASS`; `ALLOW` makes the entity radiation-immune, `DENY` vulnerable. Asked after the mutation effect (always immune) and before the `hbm:radiation_immune` tag and the `IRadiationImmune` interface |
 | `BobmazonOfferFactory.OFFERS` | `void addOffers(List<Offer> standard, List<Offer> special)` | notifying; append Bobmazon offers. Register at mod construction on both sides |
 
 **Particle effects.** `com.hbm.particle.helper.HbmEffectNT.register("<ns>:<name>")` adds an effect to HBM's particle

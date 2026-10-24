@@ -1,0 +1,5 @@
+# Classes holding Dejson declarations (registration chains, crafting recipes), one per line, in initialisation order.
+{{#example}}
+{{package}}.registry.{{className}}Blocks
+{{package}}.recipe.{{className}}CraftingRecipes
+{{/example}}

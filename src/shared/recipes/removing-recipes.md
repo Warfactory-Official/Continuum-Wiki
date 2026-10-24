@@ -70,8 +70,9 @@ usual, and Golem Core removes the recipe after the load when a condition fails, 
 - The value is a list of strings, or a single string.
 - The entries are the flags HBM declares: `enable_528`, `expensive_mode`, `enable_528_pressurized`, `lbsm`,
   `lbsm_simple_chemistry`, `lbsm_simple_centrifuge`, `lbsm_simple_crafting`, `lbsm_simple_alloy`,
-  `lbsm_unlock_anvil`, `lbsm_simple_armor`, `lbsm_simple_tool`, `lbsm_simple_medicine`. Their meaning is in
-  [common fields](../common-fields/#requires).
+  `lbsm_unlock_anvil`, `lbsm_simple_armor`, `lbsm_simple_tool`, `lbsm_simple_medicine`, and `raw_ores` (on while
+  `hbm.cfg` `1.90_enableRawOres` is true). Their meaning is in [common fields](../common-fields/#requires). The same
+  flags gate loot through the [`golemcore:requires`](../../data/advancements-and-loot/#golemcorerequires) loot condition.
 - The `#tag` form of a machine row's `requires` is **not** supported here. An undeclared flag fails: the recipe is
   removed, with a warning naming it.
 - The flags are read at each datapack load, so after changing the config, run `/reload`.

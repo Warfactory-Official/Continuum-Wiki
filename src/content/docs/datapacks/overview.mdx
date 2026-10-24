@@ -225,7 +225,14 @@ whole game or server, and most are read at start-up:
 | `config/hbm.cfg` | 1.7's main config: recipe modes (528 mode, LBSM, expensive mode), structure spawn weights, world generation rates, radiation and hazard switches. |
 | `config/hbmConfig/hbmServer.json` | Server settings that `/ntmserver` lists and changes. |
 | `config/hbmConfig/hbmClient.json` | Client display settings that `/ntmclient` lists and changes. |
-| `config/hbmConfig/hbmMachines.json` | Per-machine numbers 1.7 made configurable. |
+| `config/hbmConfig/hbmMachines.json` | Power, tanks, speeds and heat of 26 machines, as 1.7 made configurable. See [Machine settings](../reference/machine-settings/). |
 | `config/hbmConfig/hbmRadResist.json` | Per-item radiation resistance overrides. These win over the [radiation_resistance](../data-maps/armor/#radiation_resistance) data map. HBM writes `_hbmRadResist.json` as a template when the file is missing. |
-| `config/hbmConfig/hbmCustomMachines.json` | Player-defined custom machines. |
+| `config/hbmConfig/hbmCustomMachines.json` | Player-defined custom machines; their recipes are in `config/hbmRecipes/hbmCustomMachines.json`. See [Custom machines](../data/custom-machines/). |
+| RBMK gamerules | The RBMK's dials, per world, set with `/gamerule`. |
+
+[Config files](../reference/config/) lists every key of `hbm.cfg` and `hbmServer.json` and every RBMK gamerule, with
+defaults and descriptions.
+
+The in-game manual pages (F1 on an item) are resource-pack files, not datapack files: see
+[In-game manuals](../data/manuals/).
 

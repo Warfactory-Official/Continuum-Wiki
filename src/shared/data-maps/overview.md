@@ -17,7 +17,7 @@ data/<map namespace>/value_maps/<registry>/<map>.json
 ```
 
 The map `hbm:hazards` over items is `data/hbm/value_maps/item/hazards.json`. The registry folder is `item`, `block`,
-`fluid` or `entity_type`; HBM has one map keyed by material name, under `material`. The folder names are the same on
+`fluid`, `entity_type`, `worldgen/biome` or `dimension`; HBM has one map keyed by material name, under `material`. The folder names are the same on
 every Minecraft version.
 
 ## File format
@@ -111,7 +111,9 @@ nothing, for example. A datapack can change the values of existing items; a new 
 | Page | Maps |
 |---|---|
 | [Hazards and radiation](../hazards/) | `item/hazards`, `item/hazard_multiplier`, `fluid/cell_hazards`, `block/radiation_emission` |
-| [Armor and protection](../armor/) | `item/radiation_resistance`, `item/protection_classes`, `item/faraday_armor`, `item/armor_sets`, `item/damage_resistance`, `entity_type/damage_resistance`, `item/lockpick_jacket` |
+| [Radiation in the world](../radiation/) | `worldgen/biome/ambient_radiation`, `dimension/ambient_radiation`, `entity_type/radiation_transformation` |
+| [Armor and protection](../armor/) | `item/radiation_resistance`, `item/radiation_cladding`, `item/protection_classes`, `item/gas_mask_blacklist`, `item/faraday_armor`, `item/armor_sets`, `item/damage_resistance`, `entity_type/damage_resistance`, `item/lockpick_jacket` |
+| [Consumable treatments](../treatments/) | `item/consumable_treatment` |
 | [Reactor fuels](../reactor-fuels/) | `item/rbmk_fuel`, `item/pwr_fuel`, `item/zirnox_fuel`, `item/watz_pellet`, `item/pile_rod`, `item/rtg_pellet`, `item/betavoltaic`, `item/plate_fuel`, `item/research_reactor_fuel`, `item/radgen_fuel`, `fluid/icf_fuel`, `material/icf_fuel` |
 | [Machine parts](../machine-parts/) | `item/pa_coil`, `item/drill_bit`, `item/piston`, `item/machine_upgrade`, `item/plasma_forge_booster`, `item/battery_pack` |
 | [Fuels and containers](../fuels-and-containers/) | `item/fuel_category`, `item/difurnace_fuel`, `item/brick_furnace_speed`, `fluid/autosaw_fuel`, `fluid/gas_turbine_fuel_consumption`, `item/fluid_container`, `fluid/fluid_containers` |

@@ -73,7 +73,8 @@ earlier value's is skipped. HBM's uranium items use `mutex: 1` on both the tag a
 
 An `immune` value on the item or on any matching tag removes every hazard.
 
-`hbm:contaminating` entries only apply while ground contamination is on in `hbm.cfg`, as in 1.7.
+`hbm:contaminating` entries only apply while ground contamination is on. Continuum has no `hbm.cfg` key for it and keeps
+it off, so these entries currently have no effect.
 
 ### Example: make another mod's item radioactive
 
@@ -86,6 +87,12 @@ An `immune` value on the item or on any matching tag removes every hazard.
 ```
 
 Or put the item in a `c:` tag HBM already lists, such as `#c:ingots/uranium` (see [Tags](../../data/tags/)).
+
+### Containers
+
+A toolbox is as radioactive as everything in it together. The containment box lets through only part of its
+contents' radiation: the square root of the total, roughly. Other containers, such as crates, do not pass their
+contents' radiation on.
 
 ## hazard_multiplier
 
