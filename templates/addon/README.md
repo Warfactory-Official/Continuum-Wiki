@@ -38,8 +38,8 @@ report to `harness/out/`. It needs Java 21+ and, on Windows, Git Bash:
 ./harness/harness down
 ```
 
-It downloads its CLI and, for harness launches only, the Golem Core `-dev` jars from the Golem Core release named by
-`deps.golemcore`: the regular jar leaves the harness out. See
+It downloads its CLI from the Golem Core release named by `deps.golemcore`. The build already runs on that release's
+`-dev` jars, the regular jars plus the harness listener, which stays idle in a normal run. See
 [Testing](https://warfactory-official.github.io/Continuum-Wiki/addons/testing/).
 
 ## Updating Golem Core and NTM - Continuum
@@ -55,6 +55,10 @@ When you move to a newer Golem Core, also raise `deps.golemcore_floor` and `deps
 Each `versions/<node>/gradle.properties` names GemRender's CurseForge file id, `deps.gemrender`: a file of
 https://www.curseforge.com/minecraft/mc-mods/gemrender/files/all for that node's Minecraft version and loader (the number
 at the end of the file's page URL).
+
+The dev client run also loads Sodium (`deps.sodium_neoforge` / `deps.sodium_fabric`, plus Indium on 1.20.1 Fabric) or,
+on Forge 1.20.1, Embeddium (`deps.embeddium`), from the Modrinth Maven. They are never part of your mod's jar.
+`-Psodium.run=false` launches on vanilla's renderer.
 
 ## Where to go next
 

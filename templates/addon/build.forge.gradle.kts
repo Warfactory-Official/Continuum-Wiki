@@ -64,6 +64,10 @@ repositories {
     mavenCentral()
     maven("https://maven.blamejared.com") { name = "BlameJared" }
     exclusiveContent {
+        forRepository { maven("https://api.modrinth.com/maven") { name = "Modrinth" } }
+        filter { includeGroup("maven.modrinth") }
+    }
+    exclusiveContent {
         forRepository { maven("https://cursemaven.com") { name = "CurseMaven" } }
         filter { includeGroup("curse.maven") }
     }
@@ -87,15 +91,9 @@ repositories {
 }
 
 dependencies {
-    // Golem Core and NTM - Continuum from their GitHub releases. A harness launch (-Pharness.spec) runs on Golem Core's
-    // -dev jar, which keeps the harness listener.
-    val golemCore = "github.golem-core:golemcore-forge:${prop("deps.golemcore")}"
-    if (findProperty("harness.spec") != null) {
-        modCompileOnly("$golemCore:$mcVersion")
-        modRuntimeOnly("$golemCore:$mcVersion-dev")
-    } else {
-        modImplementation("$golemCore:$mcVersion")
-    }
+    // Golem Core and NTM - Continuum from their GitHub releases. Golem Core's -dev jar is the regular jar plus the harness
+    // listener, which stays idle unless the harness launched the client; the release jar of this mod bundles neither.
+    modImplementation("github.golem-core:golemcore-forge:${prop("deps.golemcore")}:$mcVersion-dev")
     modImplementation("github.ntm-continuum:hbm-forge:${prop("deps.hbm")}:$mcVersion")
 
     val jei = propOrNull("deps.jei_mc")
@@ -109,6 +107,10 @@ dependencies {
     // GemRender, dev runs only; -Pgemrender.run=false launches without it.
     if (propOrNull("gemrender.run") != "false") {
         propOrNull("deps.gemrender")?.let { modRuntimeOnly("curse.maven:gemrender-1735539:$it") }
+    }
+    // Embeddium, the Forge port of Sodium, client dev runs only; -Psodium.run=false launches without it.
+    if (propOrNull("sodium.run") != "false") {
+        propOrNull("deps.embeddium")?.let { modRuntimeOnly("maven.modrinth:embeddium:$it") }
     }
     // HBM's classes carry jspecify annotations; annotations only.
     compileOnly("org.jspecify:jspecify:1.0.0")

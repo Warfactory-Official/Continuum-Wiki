@@ -57,6 +57,10 @@ repositories {
     mavenCentral()
     maven("https://maven.blamejared.com") { name = "BlameJared" }
     exclusiveContent {
+        forRepository { maven("https://api.modrinth.com/maven") { name = "Modrinth" } }
+        filter { includeGroup("maven.modrinth") }
+    }
+    exclusiveContent {
         forRepository { maven("https://cursemaven.com") { name = "CurseMaven" } }
         filter { includeGroup("curse.maven") }
     }
@@ -81,21 +85,15 @@ repositories {
 
 /**
  * Dev-only mods that must be mod files in the client run's mods folder, not classpath entries: FML registers a
- * classpath jar's code but not its mixin configs. GemRender carries mixins. Never part of runtimeClasspath, or the jar
+ * classpath jar's code but not its mixin configs. GemRender and Sodium carry mixins. Never part of runtimeClasspath, or the jar
  * is found twice.
  */
 val devModJar: Configuration by configurations.creating
 
 dependencies {
-    // Golem Core and NTM - Continuum from their GitHub releases. A harness launch (-Pharness.spec) runs on Golem Core's
-    // -dev jar, which keeps the harness listener.
-    val golemCore = "github.golem-core:golemcore-neoforge:${prop("deps.golemcore")}"
-    if (findProperty("harness.spec") != null) {
-        compileOnly("$golemCore:$mcVersion")
-        runtimeOnly("$golemCore:$mcVersion-dev")
-    } else {
-        implementation("$golemCore:$mcVersion")
-    }
+    // Golem Core and NTM - Continuum from their GitHub releases. Golem Core's -dev jar is the regular jar plus the harness
+    // listener, which stays idle unless the harness launched the client; the release jar of this mod bundles neither.
+    implementation("github.golem-core:golemcore-neoforge:${prop("deps.golemcore")}:$mcVersion-dev")
     implementation("github.ntm-continuum:hbm-neoforge:${prop("deps.hbm")}:$mcVersion")
 
     val jei = propOrNull("deps.jei_mc")
@@ -108,6 +106,10 @@ dependencies {
 
     if (propOrNull("gemrender.run") != "false") {
         propOrNull("deps.gemrender")?.let { devModJar("curse.maven:gemrender-1735539:$it") }
+    }
+    // Sodium, client dev runs only (it declares itself client-side); -Psodium.run=false launches without it.
+    if (propOrNull("sodium.run") != "false") {
+        propOrNull("deps.sodium_neoforge")?.let { devModJar("maven.modrinth:sodium:$it") }
     }
     // HBM's classes carry jspecify annotations; annotations only.
     compileOnly("org.jspecify:jspecify:1.0.0")

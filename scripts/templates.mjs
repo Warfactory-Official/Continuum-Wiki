@@ -32,7 +32,8 @@ const NODE_GAME = {
 const HBM_NODE_KEYS = [
 	'deps.minecraft', 'deps.minecraft_range', 'java_version', 'pack_format', 'deps.neoforge', 'deps.neoforge_floor',
 	'deps.neoforge_loader_range', 'deps.forge', 'deps.forge_loader_range', 'deps.fabric_loader', 'deps.fabric_api',
-	'deps.jei_mc', 'deps.jei', 'deps.lwjgl', 'deps.gemrender_flywheel',
+	'deps.jei_mc', 'deps.jei', 'deps.lwjgl', 'deps.gemrender_flywheel', 'deps.sodium_neoforge', 'deps.sodium_fabric',
+	'deps.indium', 'deps.embeddium',
 ];
 
 function walk(dir, base = dir) {

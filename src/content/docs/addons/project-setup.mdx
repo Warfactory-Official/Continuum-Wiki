@@ -221,6 +221,11 @@ version and loader; the ids above are GemRender {gemrender.version}. Golem Core 
 [NTM - Continuum](https://github.com/Warfactory-Official/NTM-Continuum/releases). When you move to a newer release, also
 raise `deps.golemcore_floor` and `deps.hbm_floor`, and copy that Golem Core release's scripts into `gradle/golem/`.
 
+Each node also names its dev Sodium: `deps.sodium_neoforge` or `deps.sodium_fabric` (Sodium from Modrinth), and on
+1.20.1 Forge `deps.embeddium` (Embeddium, the Forge port; Sodium has no Forge build). 1.20.1 Fabric adds
+<code>deps.indium={prop('1.20.1-fabric', 'deps.indium')}</code>: Sodium 0.5 skips Fabric's renderer API without it, which blanks connected textures
+and custom models.
+
 1.20.1 Fabric also sets <code>deps.lwjgl={prop('1.20.1-fabric', 'deps.lwjgl')}</code>; the other Fabric nodes leave it blank. 1.21.1 Fabric and 1.20.1 Fabric set
 `deps.gemrender_flywheel` (<code>{prop('1.21.1-fabric', 'deps.gemrender_flywheel')}</code> and <code>{prop('1.20.1-fabric', 'deps.gemrender_flywheel')}</code>): GemRender's 1.x Fabric jar nests Flywheel, which a Loom dev run does
 not load, so the dev run adds it beside it. 26.1 NeoForge sets <code>deps.neoforge_floor={prop('26.1-neoforge', 'deps.neoforge_floor')}</code>, the oldest NeoForge the
@@ -236,8 +241,9 @@ There is one buildscript per loader; Stonecutter runs it once per node of that l
 1. sets the Java toolchain from `java_version` (26.1 on Java 25, 1.21.1 on 21, 1.20.1 on 17);
 2. excludes the other loaders' `platform` packages from the main source set;
 3. depends on Golem Core and HBM through Ivy repositories over their GitHub release downloads, and puts GemRender
-   (CurseMaven, `curse.maven:<slug>-<project id>:<file id>`) in the dev client run; a harness launch (`-Pharness.spec`)
-   runs on Golem Core's `-dev` jar from the same release (see [Testing](../testing/#scripted-client-checks));
+   (CurseMaven, `curse.maven:<slug>-<project id>:<file id>`) and Sodium or Embeddium (Modrinth Maven,
+   `maven.modrinth:<slug>:<version>`) in the dev client run. Golem Core is its release's `-dev` jar: the regular jar plus
+   the harness listener, idle unless the harness launched the client (see [Testing](../testing/#scripted-client-checks));
 4. fills the `${...}` placeholders in the metadata files and excludes the other loaders' metadata;
 5. makes `compileJava` and `processResources` (and on NeoForge `createMinecraftArtifacts`) depend on
    `stonecutterGenerate`, or they read the previous node's source;
@@ -247,7 +253,9 @@ Running a node on the wrong Java fails in confusing ways: a 1.21.1 NeoForge clie
 `ClassNotFoundException: java.lang.Boolean`. `run-toolchain.gradle.kts` pins every run task to the node's Java.
 
 GemRender is optional for players and only in the dev client run. Add `-Pgemrender.run=false` to launch without it, as a
-player without GemRender would.
+player without GemRender would. Sodium (Embeddium on Forge 1.20.1) is in the dev client run for the same reason: many
+players have it, and it renders chunks and block models its own way. Add `-Psodium.run=false` to launch on vanilla's
+renderer.
 
 ### build.neoforge.gradle.kts
 
@@ -296,6 +304,10 @@ repositories {
     mavenCentral()
     maven("https://maven.blamejared.com") { name = "BlameJared" }
     exclusiveContent {
+        forRepository { maven("https://api.modrinth.com/maven") { name = "Modrinth" } }
+        filter { includeGroup("maven.modrinth") }
+    }
+    exclusiveContent {
         forRepository { maven("https://cursemaven.com") { name = "CurseMaven" } }
         filter { includeGroup("curse.maven") }
     }
@@ -318,22 +330,19 @@ repositories {
     }
 }
 
-// GemRender carries mixins, so it goes in the client run's mods folder: FML registers a classpath jar's code but not its
+// GemRender and Sodium carry mixins, so they go in the client run's mods folder: FML registers a classpath jar's code but not its
 // mixin configs.
 val devModJar: Configuration by configurations.creating
 
 dependencies {
-    // A harness launch (-Pharness.spec) runs on Golem Core's -dev jar, which keeps the harness listener.
-    val golemCore = "github.golem-core:golemcore-neoforge:${prop("deps.golemcore")}"
-    if (findProperty("harness.spec") != null) {
-        compileOnly("$golemCore:$mcVersion")
-        runtimeOnly("$golemCore:$mcVersion-dev")
-    } else {
-        implementation("$golemCore:$mcVersion")
-    }
+    // Golem Core's -dev jar: the regular jar plus the harness listener, idle unless the harness launched the client.
+    implementation("github.golem-core:golemcore-neoforge:${prop("deps.golemcore")}:$mcVersion-dev")
     implementation("github.ntm-continuum:hbm-neoforge:${prop("deps.hbm")}:$mcVersion")
     if (propOrNull("gemrender.run") != "false") {
         propOrNull("deps.gemrender")?.let { devModJar("curse.maven:gemrender-1735539:$it") }
+    }
+    if (propOrNull("sodium.run") != "false") {
+        propOrNull("deps.sodium_neoforge")?.let { devModJar("maven.modrinth:sodium:$it") }
     }
     compileOnly("org.jspecify:jspecify:1.0.0")
 }
@@ -438,6 +447,10 @@ repositories {
         content { includeGroup("dev.engine-room.flywheel") }
     }
     exclusiveContent {
+        forRepository { maven("https://api.modrinth.com/maven") { name = "Modrinth" } }
+        filter { includeGroup("maven.modrinth") }
+    }
+    exclusiveContent {
         forRepository { maven("https://cursemaven.com") { name = "CurseMaven" } }
         filter { includeGroup("curse.maven") }
     }
@@ -460,12 +473,16 @@ dependencies {
     if (obfuscated) "mappings"(loom.officialMojangMappings())
     modCfg("net.fabricmc:fabric-loader:${prop("deps.fabric_loader")}")
     modCfg("net.fabricmc.fabric-api:fabric-api:${prop("deps.fabric_api")}")
-    // Golem Core (its -dev jar under the harness) and NTM - Continuum, as on NeoForge
-    modCfg("github.golem-core:golemcore-fabric:${prop("deps.golemcore")}:$mcVersion")
+    // Golem Core (its -dev jar) and NTM - Continuum, as on NeoForge
+    modCfg("github.golem-core:golemcore-fabric:${prop("deps.golemcore")}:$mcVersion-dev")
     modCfg("github.ntm-continuum:hbm-fabric:${prop("deps.hbm")}:$mcVersion")
     if (propOrNull("gemrender.run") != "false") {
         propOrNull("deps.gemrender")?.let { devRuntime("curse.maven:gemrender-1735539:$it") }
         propOrNull("deps.gemrender_flywheel")?.let { devRuntime("dev.engine-room.flywheel:flywheel-fabric-$mcVersion:$it") }
+    }
+    if (propOrNull("sodium.run") != "false") {
+        propOrNull("deps.sodium_fabric")?.let { devRuntime("maven.modrinth:sodium:$it") }
+        propOrNull("deps.indium")?.let { devRuntime("maven.modrinth:indium:$it") }
     }
     "compileOnly"("org.jspecify:jspecify:1.0.0")
 }
@@ -549,11 +566,14 @@ legacyForge {
 }
 
 dependencies {
-    // Golem Core (its -dev jar under the harness) and NTM - Continuum, as on NeoForge
-    modImplementation("github.golem-core:golemcore-forge:${prop("deps.golemcore")}:$mcVersion")
+    // Golem Core (its -dev jar) and NTM - Continuum, as on NeoForge
+    modImplementation("github.golem-core:golemcore-forge:${prop("deps.golemcore")}:$mcVersion-dev")
     modImplementation("github.ntm-continuum:hbm-forge:${prop("deps.hbm")}:$mcVersion")
     if (propOrNull("gemrender.run") != "false") {
         propOrNull("deps.gemrender")?.let { modRuntimeOnly("curse.maven:gemrender-1735539:$it") }
+    }
+    if (propOrNull("sodium.run") != "false") {
+        propOrNull("deps.embeddium")?.let { modRuntimeOnly("maven.modrinth:embeddium:$it") }
     }
     compileOnly("org.jspecify:jspecify:1.0.0")
 }

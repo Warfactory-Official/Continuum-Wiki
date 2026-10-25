@@ -142,9 +142,10 @@ go in `harness/scenarios` (the example content comes with `ExampleBlock.java`), 
 
 On Windows use Git Bash; `harness\harness.cmd` works too, but cmd mangles JSON arguments. The CLI needs Java 21 or newer.
 
-The regular Golem Core jar has no harness in it. The wrapper downloads the CLI from the Golem Core release named by
-`deps.golemcore` in `gradle.properties`, and harness launches run on that release's `-dev` jars (the same Golem Core with
-the harness kept). Golem Core releases after 1.0.1 carry them; with `deps.golemcore=1.0.1` the harness cannot start.
+The regular Golem Core jar has no harness in it, so the project builds and runs on that release's `-dev` jars (the same
+Golem Core with the harness listener, which stays idle unless the harness launched the client). Your mod's release jar
+does not include Golem Core, so players get the regular jar from the Golem Core release. The wrapper downloads the CLI
+from the Golem Core release named by `deps.golemcore` in `gradle.properties`. Golem Core releases after 1.0.1 carry them; with `deps.golemcore=1.0.1` the harness cannot start.
 Writing scenarios and every
 command: `harness/README.md` in the [Golem Core repository](https://github.com/Warfactory-Official/Golem-Core).
 

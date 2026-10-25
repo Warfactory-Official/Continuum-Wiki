@@ -30,6 +30,10 @@ repositories {
         content { includeGroup("dev.engine-room.flywheel") }
     }
     exclusiveContent {
+        forRepository { maven("https://api.modrinth.com/maven") { name = "Modrinth" } }
+        filter { includeGroup("maven.modrinth") }
+    }
+    exclusiveContent {
         forRepository { maven("https://cursemaven.com") { name = "CurseMaven" } }
         filter { includeGroup("curse.maven") }
     }
@@ -64,8 +68,6 @@ propOrNull("deps.lwjgl")?.let { pinned ->
 }
 
 val modCfg = if (obfuscated) "modImplementation" else "implementation"
-val modCompileCfg = if (obfuscated) "modCompileOnly" else "compileOnly"
-val modRuntimeCfg = if (obfuscated) "modRuntimeOnly" else "runtimeOnly"
 val devRuntime = if (obfuscated) "modLocalRuntime" else "localRuntime"
 
 dependencies {
@@ -74,15 +76,9 @@ dependencies {
     modCfg("net.fabricmc:fabric-loader:${prop("deps.fabric_loader")}")
     modCfg("net.fabricmc.fabric-api:fabric-api:${prop("deps.fabric_api")}")
 
-    // Golem Core and NTM - Continuum from their GitHub releases. A harness launch (-Pharness.spec) runs on Golem Core's
-    // -dev jar, which keeps the harness listener.
-    val golemCore = "github.golem-core:golemcore-fabric:${prop("deps.golemcore")}"
-    if (findProperty("harness.spec") != null) {
-        modCompileCfg("$golemCore:$mcVersion")
-        modRuntimeCfg("$golemCore:$mcVersion-dev")
-    } else {
-        modCfg("$golemCore:$mcVersion")
-    }
+    // Golem Core and NTM - Continuum from their GitHub releases. Golem Core's -dev jar is the regular jar plus the harness
+    // listener, which stays idle unless the harness launched the client; the release jar of this mod bundles neither.
+    modCfg("github.golem-core:golemcore-fabric:${prop("deps.golemcore")}:$mcVersion-dev")
     modCfg("github.ntm-continuum:hbm-fabric:${prop("deps.hbm")}:$mcVersion")
 
     val jei = propOrNull("deps.jei_mc")
@@ -96,6 +92,12 @@ dependencies {
     if (propOrNull("gemrender.run") != "false") {
         propOrNull("deps.gemrender")?.let { devRuntime("curse.maven:gemrender-1735539:$it") }
         propOrNull("deps.gemrender_flywheel")?.let { devRuntime("dev.engine-room.flywheel:flywheel-fabric-$mcVersion:$it") }
+    }
+    // Sodium, client dev runs only (environment: client); -Psodium.run=false launches without it. On 1.20.1 Sodium 0.5
+    // skips Fabric's renderer API (connected textures, HBM's custom models) unless Indium is loaded.
+    if (propOrNull("sodium.run") != "false") {
+        propOrNull("deps.sodium_fabric")?.let { devRuntime("maven.modrinth:sodium:$it") }
+        propOrNull("deps.indium")?.let { devRuntime("maven.modrinth:indium:$it") }
     }
     // HBM's classes carry jspecify annotations; annotations only.
     "compileOnly"("org.jspecify:jspecify:1.0.0")
