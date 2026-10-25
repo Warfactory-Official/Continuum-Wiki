@@ -98,9 +98,22 @@ menu, a block interaction), open it in game on each loader.
 
 ## Scripted client checks
 
-HBM and NTM: Space use a shared harness that drives real dev clients and takes screenshots: `../Golem-Core/harness/harness`,
-configured by your project's `harness.json`, with scenarios in `harness/scenarios`. See `Golem-Core/harness/README.md` in
-the Golem Core repository for setup.
+Golem Core's harness drives real dev clients and takes screenshots. A project from the
+[template generator](../../getting-started/template-generator/) is ready for it: `harness.json` names its nodes, scenarios
+go in `harness/scenarios` (the example content comes with `ExampleBlock.java`), and `harness/harness` runs the CLI.
+
+```bash
+./harness/harness up --nodes 26.1-neoforge,26.1-fabric   # build, capture the launch, start two clients in a test world
+./harness/harness run ExampleBlock.java                    # report and screenshots in harness/out/runs/
+./harness/harness down
+```
+
+On Windows use Git Bash; `harness\harness.cmd` works too, but cmd mangles JSON arguments. The CLI needs Java 21 or newer.
+
+The regular Golem Core jar has no harness in it. The wrapper downloads the CLI from the Golem Core release named by
+`deps.golemcore` in `gradle.properties`, and harness launches run on that release's `-dev` jars (the same Golem Core with
+the harness kept). Writing scenarios and every
+command: `harness/README.md` in the [Golem Core repository](https://github.com/Warfactory-Official/Golem-Core).
 
 :::note
 The harness is built for AI coding assistants doing automated testing: an assistant can boot the clients, run a

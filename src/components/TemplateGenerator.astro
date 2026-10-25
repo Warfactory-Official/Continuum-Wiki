@@ -105,10 +105,10 @@ const manifestUrl = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/generator/ma
 		button.disabled = !ok;
 		if (!manifest) return;
 		const missing = Object.keys(errors).filter((k) => !edited.has(k));
-		const cf = manifest.curseforge;
+		const r = manifest.releases;
 		const built = new Date(manifest.built).toLocaleDateString();
 		status.textContent = kind === 'addon'
-			? `Golem Core ${cf.golemcore.version}, NTM - Continuum ${cf.hbm.version} and GemRender ${cf.gemrender.version} from CurseForge, checked ${built}.`
+			? `Golem Core ${r.golemcore.version} and NTM - Continuum ${r.hbm.version} from GitHub, GemRender ${r.gemrender.version} from CurseForge, checked ${built}.`
 			: '';
 		if (missing.length) status.textContent = `Still to fill in: ${missing.map((k) => labelOf(form, k)).join(', ')}.`;
 		fileList.textContent = ok

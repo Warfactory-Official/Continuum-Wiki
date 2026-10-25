@@ -1,0 +1,15 @@
+{
+  "name": "{{modId}}",
+  "mod": ".",
+  "golemCore": null,
+  "scenarios": "harness/scenarios",
+  "fixtures": "harness/fixtures",
+  "out": "harness/out",
+  "world": "harness",
+  "defaultNodes": [{{harnessDefaultNodes}}],
+  "maxClients": 2,
+  "retentionHours": 10,
+  "nodes": [
+{{harnessNodes}}
+  ]
+}

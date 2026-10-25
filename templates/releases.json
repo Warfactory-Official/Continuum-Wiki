@@ -1,0 +1,8 @@
+{
+  "golemcore": { "version": "1.0.1" },
+  "hbm": { "version": "1.0.1" },
+  "gemrender": {
+    "version": "0.1.18",
+    "files": { "26.1-neoforge": "9302431", "26.1-fabric": "9302432", "1.21.1-neoforge": "9302429", "1.21.1-fabric": "9302430", "1.20.1-forge": "9302428", "1.20.1-fabric": "9302427" }
+  }
+}

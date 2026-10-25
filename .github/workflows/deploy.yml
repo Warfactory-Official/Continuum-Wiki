@@ -4,10 +4,10 @@ on:
   push:
     branches: [main]
   schedule:
-    # Every 10 minutes: rebuild only when CurseForge has approved new Golem Core, NTM - Continuum or GemRender files
-    # for the template generator (scripts/check-releases.mjs).
+    # Every 10 minutes: rebuild only when Golem Core or NTM - Continuum has a new GitHub release, or CurseForge has
+    # approved new GemRender files, for the template generator (scripts/check-releases.mjs).
     - cron: '*/10 * * * *'
-    # Daily: rebuild regardless, in case a check was missed or CurseForge could not be read.
+    # Daily: rebuild regardless, in case a check was missed or a source could not be read.
     - cron: '17 4 * * *'
   workflow_dispatch:
 
@@ -32,6 +32,9 @@ jobs:
           sparse-checkout: scripts
       - id: check
         run: node scripts/check-releases.mjs
+        env:
+          # 1,000 GitHub API requests an hour for the repository instead of 60 per runner address.
+          GITHUB_TOKEN: ${{ github.token }}
 
   build:
     needs: check
@@ -42,6 +45,8 @@ jobs:
       - uses: withastro/action@v5
         with:
           node-version: 22
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
   deploy:
     needs: build

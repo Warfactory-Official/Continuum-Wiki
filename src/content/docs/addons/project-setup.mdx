@@ -1,6 +1,6 @@
 ---
 title: Project setup
-description: "The files an addon mod project needs to build for all six NTM - Continuum nodes, with Golem Core and NTM - Continuum from CurseForge."
+description: "The files an addon mod project needs to build for all six NTM - Continuum nodes, with Golem Core and NTM - Continuum from their GitHub releases."
 sidebar:
   order: 2
 ---
@@ -10,14 +10,15 @@ import NodeVersions from '../../../components/NodeVersions.astro';
 import { golemcore, hbm, gemrender, nodeFileBare, prop } from '../../../generator/releases.ts';
 
 This page lists every file an addon mod project needs before it has any content. The build is NTM: Space's
-([NTM-Continuum-Space](https://github.com/Warfactory-Official/NTM-Continuum-Space)), trimmed, with Golem Core,
-NTM - Continuum and GemRender taken from CurseForge through [CurseMaven](https://www.cursemaven.com/). The project builds
+([NTM-Continuum-Space](https://github.com/Warfactory-Official/NTM-Continuum-Space)), trimmed, with Golem Core and
+NTM - Continuum taken from their GitHub releases and GemRender from CurseForge through
+[CurseMaven](https://www.cursemaven.com/). The project builds
 on its own: no other checkout is needed. When the files are in place, continue with
 [Your first addon mod](../first-addon/).
 
 :::tip[Skip the setup]
 The [template generator](../../getting-started/template-generator/) downloads a project with every file on this page,
-named and set up for the targets you pick, with the newest CurseForge files already filled in.
+named and set up for the targets you pick, with the newest releases already filled in.
 :::
 
 ## Directory layout
@@ -35,6 +36,8 @@ my-addon/
     dejson-classes.txt
     dejson-authored.txt
     golem/            Golem Core's shared build scripts
+  harness.json        the harness's nodes and paths
+  harness/            harness CLI wrappers; scenarios/ holds your scenarios
   versions/
     26.1-neoforge/gradle.properties
     26.1-fabric/gradle.properties
@@ -96,7 +99,7 @@ build; the source tree is committed in that node's state.
 NTM: Space builds against local checkouts of Golem Core and NTM - Continuum instead, as Gradle composite builds
 (`includeBuild("../Golem-Core")` with a dependency substitution per node, in its
 [settings.gradle.kts](https://github.com/Warfactory-Official/NTM-Continuum-Space/blob/main/settings.gradle.kts)). Do the
-same only when you change those projects together with your addon; otherwise the CurseForge jars are simpler.
+same only when you change those projects together with your addon; otherwise the released jars are simpler.
 :::
 
 ## stonecutter.gradle.kts
@@ -161,6 +164,9 @@ mod.issues=
 mod.credits=
 mod.description=An addon for NTM - Continuum.
 
+# The Golem Core and NTM - Continuum GitHub releases the build uses.
+deps.golemcore=${golemcore.version}
+deps.hbm=${hbm.version}
 # The lowest Golem Core and NTM - Continuum versions the mod metadata accepts.
 deps.golemcore_floor=${golemcore.version}
 deps.hbm_floor=${hbm.version}
@@ -173,8 +179,6 @@ deps.minecraft=[VERSIONED]
 deps.minecraft_range=[VERSIONED]
 java_version=[VERSIONED]
 pack_format=[VERSIONED]
-deps.golemcore=[VERSIONED]
-deps.hbm=[VERSIONED]
 deps.gemrender=[VERSIONED]
 deps.fabric_loader=[VERSIONED]
 deps.fabric_api=[VERSIONED]
@@ -202,20 +206,19 @@ golem.build.legacyAssets.selectProperties=hbm:model_state
 
 ## versions/&lt;node&gt;/gradle.properties
 
-Each node's file holds that node's dependency versions and the CurseForge files of Golem Core, NTM - Continuum and
-GemRender. Keep the versions equal to HBM's file for the same node, at the release you build against
+Each node's file holds that node's dependency versions and GemRender's CurseForge file. Keep the versions equal to HBM's file for the same node, at the release you build against
 ([versions/](https://github.com/Warfactory-Official/NTM-Continuum/tree/main/versions)), since the addon mod runs on that HBM
-node. The values for NTM - Continuum {hbm.version}, the newest release on CurseForge when this page was built:
+node. The values for NTM - Continuum {hbm.version}, the newest release when this page was built:
 
 <NodeVersions />
 
-`deps.golemcore`, `deps.hbm` and `deps.gemrender` are CurseForge file ids: the number at the end of a file's page on
-[Golem Core](https://www.curseforge.com/minecraft/mc-mods/golem-core/files/all),
-[NTM - Continuum](https://www.curseforge.com/minecraft/mc-mods/ntm-continuum/files/all) or
+`deps.gemrender` is a CurseForge file id: the number at the end of a file's page on
 [GemRender](https://www.curseforge.com/minecraft/mc-mods/gemrender/files/all). Pick the file for the node's Minecraft
-version and loader. The ids above are Golem Core {golemcore.version}, NTM - Continuum {hbm.version} and GemRender {gemrender.version}. When you move to a
-newer release, also raise `deps.golemcore_floor` and `deps.hbm_floor`, and copy that Golem Core release's scripts into
-`gradle/golem/`.
+version and loader; the ids above are GemRender {gemrender.version}. Golem Core and NTM - Continuum are one version each,
+`deps.golemcore` and `deps.hbm` in the root `gradle.properties`, naming a release of
+[Golem Core](https://github.com/Warfactory-Official/Golem-Core/releases) and
+[NTM - Continuum](https://github.com/Warfactory-Official/NTM-Continuum/releases). When you move to a newer release, also
+raise `deps.golemcore_floor` and `deps.hbm_floor`, and copy that Golem Core release's scripts into `gradle/golem/`.
 
 1.20.1 Fabric also sets <code>deps.lwjgl={prop('1.20.1-fabric', 'deps.lwjgl')}</code>; the other Fabric nodes leave it blank. 1.21.1 Fabric and 1.20.1 Fabric set
 `deps.gemrender_flywheel` (<code>{prop('1.21.1-fabric', 'deps.gemrender_flywheel')}</code> and <code>{prop('1.20.1-fabric', 'deps.gemrender_flywheel')}</code>): GemRender's 1.x Fabric jar nests Flywheel, which a Loom dev run does
@@ -231,8 +234,9 @@ There is one buildscript per loader; Stonecutter runs it once per node of that l
 
 1. sets the Java toolchain from `java_version` (26.1 on Java 25, 1.21.1 on 21, 1.20.1 on 17);
 2. excludes the other loaders' `platform` packages from the main source set;
-3. depends on Golem Core and HBM through CurseMaven (`curse.maven:<slug>-<project id>:<file id>`), and puts GemRender in
-   the dev client run;
+3. depends on Golem Core and HBM through Ivy repositories over their GitHub release downloads, and puts GemRender
+   (CurseMaven, `curse.maven:<slug>-<project id>:<file id>`) in the dev client run; a harness launch (`-Pharness.spec`)
+   runs on Golem Core's `-dev` jar from the same release (see [Testing](../testing/#scripted-client-checks));
 4. fills the `${...}` placeholders in the metadata files and excludes the other loaders' metadata;
 5. makes `compileJava` and `processResources` (and on NeoForge `createMinecraftArtifacts`) depend on
    `stonecutterGenerate`, or they read the previous node's source;
@@ -294,6 +298,23 @@ repositories {
         forRepository { maven("https://cursemaven.com") { name = "CurseMaven" } }
         filter { includeGroup("curse.maven") }
     }
+    // Golem Core and NTM - Continuum: the jars attached to their GitHub releases.
+    for ((repo, group) in listOf("Golem-Core" to "github.golem-core", "NTM-Continuum" to "github.ntm-continuum")) {
+        exclusiveContent {
+            forRepository {
+                ivy("https://github.com/Warfactory-Official/$repo/releases/download") {
+                    name = repo
+                    patternLayout {
+                        artifact("v[revision]/[module]-[revision]+[classifier].[ext]")
+                        // Releases up to 1.0.1 also carry the Minecraft version before the mod version.
+                        artifact("v[revision]/[module]-[classifier]-[revision]+[classifier].[ext]")
+                    }
+                    metadataSources { artifact() }
+                }
+            }
+            filter { includeGroup(group) }
+        }
+    }
 }
 
 // GemRender carries mixins, so it goes in the client run's mods folder: FML registers a classpath jar's code but not its
@@ -301,8 +322,15 @@ repositories {
 val devModJar: Configuration by configurations.creating
 
 dependencies {
-    implementation("curse.maven:golem-core-1719361:${prop("deps.golemcore")}")
-    implementation("curse.maven:ntm-continuum-1719328:${prop("deps.hbm")}")
+    // A harness launch (-Pharness.spec) runs on Golem Core's -dev jar, which keeps the harness listener.
+    val golemCore = "github.golem-core:golemcore-neoforge:${prop("deps.golemcore")}"
+    if (findProperty("harness.spec") != null) {
+        compileOnly("$golemCore:$mcVersion")
+        runtimeOnly("$golemCore:$mcVersion-dev")
+    } else {
+        implementation("$golemCore:$mcVersion")
+    }
+    implementation("github.ntm-continuum:hbm-neoforge:${prop("deps.hbm")}:$mcVersion")
     if (propOrNull("gemrender.run") != "false") {
         propOrNull("deps.gemrender")?.let { devModJar("curse.maven:gemrender-1735539:$it") }
     }
@@ -352,6 +380,7 @@ extra["mc_version"] = mcVersion
 extra["java_version"] = javaVersion.toString()
 extra["loader_cooking_result_count"] = true
 apply(from = rootProject.file("gradle/golem/run-toolchain.gradle.kts"))
+apply(from = rootProject.file("gradle/golem/harness-spec.gradle.kts"))
 apply(from = rootProject.file("gradle/golem/legacy-recipes.gradle.kts"))
 extra["loader"] = "neoforge"
 apply(from = rootProject.file("gradle/golem/recipe-conditions.gradle.kts"))
@@ -410,6 +439,7 @@ repositories {
         forRepository { maven("https://cursemaven.com") { name = "CurseMaven" } }
         filter { includeGroup("curse.maven") }
     }
+    // plus the two GitHub release repositories, as on NeoForge
 }
 
 val obfuscated = mcVersion.substringBefore('.').toInt() < 26
@@ -428,8 +458,9 @@ dependencies {
     if (obfuscated) "mappings"(loom.officialMojangMappings())
     modCfg("net.fabricmc:fabric-loader:${prop("deps.fabric_loader")}")
     modCfg("net.fabricmc.fabric-api:fabric-api:${prop("deps.fabric_api")}")
-    modCfg("curse.maven:golem-core-1719361:${prop("deps.golemcore")}")
-    modCfg("curse.maven:ntm-continuum-1719328:${prop("deps.hbm")}")
+    // Golem Core (its -dev jar under the harness) and NTM - Continuum, as on NeoForge
+    modCfg("github.golem-core:golemcore-fabric:${prop("deps.golemcore")}:$mcVersion")
+    modCfg("github.ntm-continuum:hbm-fabric:${prop("deps.hbm")}:$mcVersion")
     if (propOrNull("gemrender.run") != "false") {
         propOrNull("deps.gemrender")?.let { devRuntime("curse.maven:gemrender-1735539:$it") }
         propOrNull("deps.gemrender_flywheel")?.let { devRuntime("dev.engine-room.flywheel:flywheel-fabric-$mcVersion:$it") }
@@ -516,8 +547,9 @@ legacyForge {
 }
 
 dependencies {
-    modImplementation("curse.maven:golem-core-1719361:${prop("deps.golemcore")}")
-    modImplementation("curse.maven:ntm-continuum-1719328:${prop("deps.hbm")}")
+    // Golem Core (its -dev jar under the harness) and NTM - Continuum, as on NeoForge
+    modImplementation("github.golem-core:golemcore-forge:${prop("deps.golemcore")}:$mcVersion")
+    modImplementation("github.ntm-continuum:hbm-forge:${prop("deps.hbm")}:$mcVersion")
     if (propOrNull("gemrender.run") != "false") {
         propOrNull("deps.gemrender")?.let { modRuntimeOnly("curse.maven:gemrender-1735539:$it") }
     }
@@ -538,7 +570,7 @@ extra["convention_namespace"] = "forge"
 // then the same apply(...) lines as NeoForge, with extra["loader"] = "forge"
 ```
 
-The CurseForge Forge jars are reobfuscated, so `modImplementation` remaps them, as Loom does on Fabric below 26.1. There
+The released Forge jars are reobfuscated, so `modImplementation` remaps them, as Loom does on Fabric below 26.1. There
 is no `createMinecraftArtifacts` task and no `loader_cooking_result_count` on Forge. `convention_namespace` makes the shared
 scripts use Forge 1.20.1's `forge:` convention tags in converted recipes and biome tags. NTM: Space's Forge GameTest run
 also writes `level-type=minecraft:flat` into its `server.properties` before each run, so every run starts from an empty
@@ -547,12 +579,13 @@ flat world.
 ## The shared build scripts
 
 Each loader buildscript applies Golem Core's scripts from `gradle/golem/`, after setting the `extra` values they read
-(`mc_version`, `java_version`, `loader`). They are copies of `gradle/mod/` in Golem Core; keep them at the release your
-`deps.golemcore` files come from.
+(`mc_version`, `java_version`, `loader`). They are copies of `gradle/mod/` in Golem Core; keep them at the release
+`deps.golemcore` names.
 
 | Script | Does | Parameters (`golem.build.*`) |
 |---|---|---|
 | `run-toolchain` | pins run tasks to the node's Java | `runToolchain.clientFlags` |
+| `harness-spec` | with `-Pharness.spec`, writes the client launch for the harness CLI instead of starting the game | none |
 | `legacy-recipes` | rewrites recipe JSON for nodes below 1.21.2 | `legacyRecipes.componentSmeltingType`, `resourceTasks` |
 | `recipe-conditions` | rewrites `"golem:conditions"` to the loader's spelling | `resourceTasks` |
 | `legacy-biomes` | converts biome files for older nodes | none |

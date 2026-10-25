@@ -38,11 +38,12 @@ Facts come from the mod's code. When a page and the code disagree, fix the page.
 `src/generator/generate.js` from the files in `templates/`. `scripts/templates.mjs` bundles those files into
 `public/generator/manifest.json` (git-ignored) on every build and dev start. While bundling it looks up:
 
-- the newest CurseForge files of Golem Core, NTM - Continuum and GemRender for each node, through cfwidget;
+- the newest GitHub releases of Golem Core and NTM - Continuum (the API's `releases/latest`, with `GITHUB_TOKEN` when
+  set), and GemRender's newest CurseForge file for each node, through cfwidget;
 - Golem Core's shared build scripts at that release's tag, for the addon's `gradle/golem/`;
 - NTM - Continuum's `versions/<node>/gradle.properties` at its tag, for the dependency versions.
 
-Each falls back to `templates/curseforge.json`, `templates/addon/gradle/golem/` and `templates/addon/versions/` when the
+Each falls back to `templates/releases.json`, `templates/addon/gradle/golem/` and `templates/addon/versions/` when the
 lookup fails, so refresh those copies now and then. Template files use `{{token}}` and `{{#flag}}...{{/flag}}`
 sections; `template.json` says which files are binary, executable or tied to a flag.
 
@@ -55,5 +56,5 @@ cd ../template-check/exampleaddon && ./gradlew chiseledBuild
 
 ## Deploying
 
-`.github/workflows/deploy.yml` builds and deploys on every push to `main`, and daily so the template generator picks
-up new releases. In the repository settings, set **Pages > Build and deployment > Source** to **GitHub Actions** once.
+`.github/workflows/deploy.yml` builds and deploys on every push to `main`, after a new release (checked every 10
+minutes by `scripts/check-releases.mjs`), and daily. In the repository settings, set **Pages > Build and deployment > Source** to **GitHub Actions** once.

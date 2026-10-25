@@ -18,6 +18,7 @@ export const DATAPACK_VERSIONS = [
 	{ id: '1.20.1', format: 15, label: '1.20.1' },
 ];
 const NEW_FORMAT = 82;
+const JAVA_OF = { '26.1': 25, '1.21.1': 21, '1.20.1': 17 };
 const OVERLAY_DIR = 'overlay_1_21';
 
 const RESERVED_IDS = ['minecraft', 'hbm', 'golemcore', 'ntmspace', 'neoforge', 'forge', 'fabric', 'fabricloader', 'c', 'java'];
@@ -120,7 +121,7 @@ function addonFiles(manifest, s) {
 		row.loaders.push(n.loader);
 	}
 	const description = (s.description ?? '').trim() || `An addon for NTM - Continuum.`;
-	const { golemcore, hbm, gemrender } = manifest.curseforge;
+	const { golemcore, hbm, gemrender } = manifest.releases;
 	const homepage = (s.homepage ?? '').trim().replace(/\/+$/, '');
 	const issues = /^https:\/\/github\.com\/[^/]+\/[^/]+$/.test(homepage) ? homepage + '/issues' : homepage;
 	const vars = {
@@ -144,6 +145,11 @@ function addonFiles(manifest, s) {
 		stonecutterMatches: byMc
 			.map((r) => `        match("${r.mc}", ${[...r.loaders].sort().map((l) => `"${l}"`).join(', ')})`)
 			.join('\n'),
+		// The harness CLI's nodes: one port each, the data pack format its fixtures pack uses, the node's Java.
+		harnessNodes: nodes.map((n) => `    {"name": "${n.id}", "minecraft": "${n.mc}", "loader": "${n.loader}", "port": ${
+			47601 + NODES.indexOf(n)}, "packFormat": ${DATAPACK_VERSIONS.find((v) => v.id === n.mc).format}, "java": ${JAVA_OF[n.mc]}}`)
+			.join(',\n'),
+		harnessDefaultNodes: nodes.slice(0, 2).map((n) => `"${n.id}"`).join(', '),
 		golemVersion: golemcore.version,
 		hbmVersion: hbm.version,
 		gemVersion: gemrender.version,
@@ -164,7 +170,7 @@ function addonFiles(manifest, s) {
 		if (f.path.startsWith(tpl.meta.nodeFolder)) {
 			const node = f.path.slice(tpl.meta.nodeFolder.length).split('/')[0];
 			if (!s.nodes.includes(node)) continue;
-			nodeVars = { ...vars, golemFile: golemcore.files[node], hbmFile: hbm.files[node], gemFile: gemrender.files[node] };
+			nodeVars = { ...vars, gemFile: gemrender.files[node] };
 		}
 		const path = render(f.path, nodeVars, flags, f.path);
 		const data = f.base64 != null ? decodeBase64(f.base64) : render(f.text, nodeVars, flags, f.path);

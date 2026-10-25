@@ -12,7 +12,7 @@ val modId = prop("mod.id")
 
 group = prop("mod.group")
 version = "${prop("mod.version")}+$mcVersion"
-base.archivesName = "$modId-forge-$mcVersion"
+base.archivesName = "$modId-forge"
 
 java { toolchain.languageVersion = JavaLanguageVersion.of(javaVersion) }
 
@@ -67,12 +67,36 @@ repositories {
         forRepository { maven("https://cursemaven.com") { name = "CurseMaven" } }
         filter { includeGroup("curse.maven") }
     }
+    // Golem Core and NTM - Continuum: the jars attached to their GitHub releases.
+    for ((repo, group) in listOf("Golem-Core" to "github.golem-core", "NTM-Continuum" to "github.ntm-continuum")) {
+        exclusiveContent {
+            forRepository {
+                ivy("https://github.com/Warfactory-Official/$repo/releases/download") {
+                    name = repo
+                    patternLayout {
+                        artifact("v[revision]/[module]-[revision]+[classifier].[ext]")
+                        // Releases up to 1.0.1 also carry the Minecraft version before the mod version.
+                        artifact("v[revision]/[module]-[classifier]-[revision]+[classifier].[ext]")
+                    }
+                    metadataSources { artifact() }
+                }
+            }
+            filter { includeGroup(group) }
+        }
+    }
 }
 
 dependencies {
-    // Golem Core and NTM - Continuum, the CurseForge files named in versions/<node>/gradle.properties.
-    modImplementation("curse.maven:golem-core-1719361:${prop("deps.golemcore")}")
-    modImplementation("curse.maven:ntm-continuum-1719328:${prop("deps.hbm")}")
+    // Golem Core and NTM - Continuum from their GitHub releases. A harness launch (-Pharness.spec) runs on Golem Core's
+    // -dev jar, which keeps the harness listener.
+    val golemCore = "github.golem-core:golemcore-forge:${prop("deps.golemcore")}"
+    if (findProperty("harness.spec") != null) {
+        modCompileOnly("$golemCore:$mcVersion")
+        modRuntimeOnly("$golemCore:$mcVersion-dev")
+    } else {
+        modImplementation("$golemCore:$mcVersion")
+    }
+    modImplementation("github.ntm-continuum:hbm-forge:${prop("deps.hbm")}:$mcVersion")
 
     val jei = propOrNull("deps.jei_mc")
     val jeiVer = propOrNull("deps.jei")
@@ -123,6 +147,7 @@ extra["java_version"] = javaVersion.toString()
 extra["convention_namespace"] = "forge"
 // Golem Core's shared build scripts; their parameters (golem.build.*) are in gradle.properties.
 apply(from = rootProject.file("gradle/golem/run-toolchain.gradle.kts"))
+apply(from = rootProject.file("gradle/golem/harness-spec.gradle.kts"))
 apply(from = rootProject.file("gradle/golem/legacy-recipes.gradle.kts"))
 extra["loader"] = "forge"
 apply(from = rootProject.file("gradle/golem/recipe-conditions.gradle.kts"))

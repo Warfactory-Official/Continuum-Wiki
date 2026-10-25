@@ -1,12 +1,13 @@
 {
   "binary": ["gradle/wrapper/gradle-wrapper.jar", "src/main/resources/assets/{{modId}}/textures/blocks/example_block.png"],
-  "executable": ["gradlew"],
+  "executable": ["gradlew", "harness/harness"],
   "when": {
     "example": [
       "src/main/java/{{packagePath}}/registry/",
       "src/main/java/{{packagePath}}/recipe/",
       "src/main/resources/assets/{{modId}}/textures/",
-      "src/main/resources/data/{{modId}}/recipe/"
+      "src/main/resources/data/{{modId}}/recipe/",
+      "harness/scenarios/"
     ],
     "neoforge": [
       "build.neoforge.gradle.kts",

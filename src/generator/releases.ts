@@ -1,12 +1,12 @@
 // The releases the template generator was built with (public/generator/releases.json, written by scripts/templates.mjs
-// before every build), for pages that quote versions and CurseForge file ids. A new release reaches them on the next
+// before every build), for pages that quote versions and GemRender's CurseForge file ids. A new release reaches them on the next
 // build, as it reaches the generator.
 import fs from 'node:fs';
 import path from 'node:path';
 
 interface Release {
 	version: string;
-	files: Record<string, string>;
+	files?: Record<string, string>;
 }
 
 const data = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'public', 'generator', 'releases.json'), 'utf8'));
