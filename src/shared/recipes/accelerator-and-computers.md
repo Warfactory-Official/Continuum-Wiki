@@ -10,7 +10,7 @@ Tables for the particle accelerator, the annihilator, the supercomputer and the 
 | Type | Machines | Schema | Picked by | Rows in HBM |
 |---|---|---|---|---|
 | `hbm:particle_accelerator` | Particle accelerator (Particle Detector) | own | first match in `order` | 11 |
-| `hbm:annihilator` | Annihilator | own | item, tag or fluid key; rows add up | 15 |
+| `hbm:annihilator` | Annihilator | own | item, tag or fluid key; rows add up | 16 |
 | `hbm:supercomputer` | Supercomputer | [generic](../common-fields/#generic-schema) | selector, saves `name` | 18 |
 | `hbm:space_assembler` | Space Laboratory - 0G Assembler | [generic](../common-fields/#generic-schema) | first row whose single input matches | 1 |
 
@@ -84,10 +84,7 @@ Generic schema, no extra fields. The player picks a row in the machine's selecto
 `name`; `power` × 100 sizes its energy buffer. The Supercomputer runs simulations and processes data drives, often with a weighted
 choice between a finished and a broken drive, and with a coolant fluid in and out.
 
-There are no generated files for this table in the build this page was written from. The row below is HBM's
-`com.blueprints`, written out by hand from its Java source:
-
-```json title="data/hbm/recipe/supercomputer/blueprints.json (HBM, written out from source)"
+```json title="data/hbm/recipe/supercomputer/blueprints.json (HBM)"
 {
   "type": "hbm:supercomputer",
   "name": "com.blueprints",

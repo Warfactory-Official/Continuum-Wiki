@@ -131,6 +131,35 @@ HbmEvents.EXPLOSION.register(event -> LOG.info("{} blast of {} at {} {} {}", eve
 | `ContaminationUtil.RAD_IMMUNE` | `Verdict apply(Entity entity)` | first non-`PASS`; `ALLOW` makes the entity radiation-immune, `DENY` vulnerable. Asked after the mutation effect (always immune) and before the `hbm:radiation_immune` tag and the `IRadiationImmune` interface |
 | `BobmazonOfferFactory.OFFERS` | `void addOffers(List<Offer> standard, List<Offer> special)` | notifying; append Bobmazon offers. Register at mod construction on both sides |
 
+HBM registers no listener on any of the hooks below; each exists for an addon (NTM: Space's use in brackets). Classes
+are under `com.hbm`.
+
+| Hook | Listener | Does |
+|---|---|---|
+| `handler.ArmorUtil.HAZMAT` | `Predicate<LivingEntity>` | any `true` counts the entity as wearing hazmat, asked after 1.7's suits (an effect) |
+| `hazard.type.HazardTypeRadiation.STACK_RADIATION` | `ToDoubleFunction<ItemStack>` | radiation a stack carries on top of its hazard entries, summed; applied with the stack count and shown on the tooltip line (neutron activation) |
+| `util.ContaminationUtil.GEIGER_LINES` | `void lines(Player player, Consumer<Component> out)` | extra geiger counter lines after the player's contamination |
+| `tileentity.machine.storage.TileEntityStorageDrum.SLOT_TICK` | `void tick(TileEntityStorageDrum drum, int slot, ItemStack stack)` | each stored stack every server tick, after its decay step |
+| `tileentity.machine.BlockEntityDecon.DECONTAMINATED` | `void decontaminated(ServerLevel level, BlockPos pos, List<LivingEntity> entities)` | after each tick's clean-up with someone inside |
+| `tileentity.machine.TileEntityReactorResearch.RADIATING` | `void radiating(Level level, BlockPos pos, TileEntityReactorResearch reactor, float rad)` | each radiating tick, with the chunk dose |
+| `blocks.machine.DemonLamp.TileEntityDemonLamp.IRRADIATED` | `void irradiated(ServerLevel level, BlockPos lamp, LivingEntity entity, float dose)` | each living thing the lamp irradiated |
+| `items.special.ItemBedrockOreBase.SOURCE` | `@Nullable OreField field(ResourceKey<Level> dimension, long seed, int x, int z)` | first non-null: the bedrock ore types and densities under a column (per-body ores) |
+| `items.special.ItemEnergy.EMPTY` | `Function<String, Item>` | first non-null: what a drink without a can or bottle leaves, by drink id (a mug) |
+| `items.special.ItemRag.USE` | `ItemStack product(Player player)` | first non-empty: what a used rag becomes |
+| `items.machine.ItemReactorSensor.USE` | `@Nullable InteractionResult useOn(UseOnContext context)` | first non-null: the sensor used on a block other than a research reactor |
+| `items.ModCustomMissileItems.PART_PROPERTIES` | `Item.Properties apply(String id, Item.Properties properties)` | chained: a custom missile part's item properties, before registration (stack size) |
+| `tileentity.machine.TileEntityMachineMiningLaser.PICKUP` | `Verdict pickUp(TileEntityMachineMiningLaser laser, ItemEntity item, boolean nullifier)` | first non-`PASS`; `ALLOW` consumed the item, `DENY` skips 1.7's nullifier and ore-oil rules |
+| `tileentity.machine.TileEntityMachineShredder.INTERCEPT` | `boolean intercept(TileEntityMachineShredder shredder, int slot, ItemStack stack)` | `true` stops this tick's shredding (a bobblehead blows it up) |
+| `tileentity.machine.storage.TileEntityBarrel.ANTIMATTER_BLAST` | `boolean explode(Level level, BlockPos pos, FluidType type)` | first `true` replaces 1.7's strength-5 explosion of a barrel that cannot hold antimatter |
+| `tileentity.machine.storage.TileEntityFileCabinet.TICK` | `Consumer<TileEntityFileCabinet>` | every server tick of every filing cabinet |
+| `tileentity.TileEntityDoorGeneric.MOVED` | `void moved(ServerLevel level, BlockPos core, TileEntityDoorGeneric door)` | a door finished opening or closing, after its cells' state is final (sealed rooms) |
+| `explosion.ExplosionNukeCustom.ANTIMATTER` | `boolean detonate(Level level, double x, double y, double z, float amat)` | first `true` replaces 1.7's balefire stage of a custom nuke |
+| `entity.logic.EntityBalefire.TICK` | `void tick(EntityBalefire balefire, boolean finished)` | each server tick of a balefire blast, before 1.7's damage |
+| `entity.logic.EntityPlaneBase.CRASH` | `void crashed(EntityPlaneBase plane, double x, double y, double z)` | a shot-down plane hit the ground, after 1.7's blast |
+| `entity.logic.EntityBomber.LOOP_SOUND` | `@Nullable SoundEvent sound(EntityBomber bomber)` | client; first non-null: a bomber's engine loop |
+| `saveddata.satellites.XSatelliteRegistry.ORBITED` | `void orbited(ServerLevel level, ItemStack stack, int freq, Satellite sat)` | a satellite was created, before it is stored; copy item data into `Satellite.extra` |
+| `tileentity.machine.TileEntityMachineSatLinker.CHIP_COPY` | `boolean copy(ItemStack source, ItemStack copy)` | every listener runs each tick both chip slots hold a chip, after the frequency is copied |
+
 **Particle effects.** `com.hbm.particle.helper.HbmEffectNT.register("<ns>:<name>")` adds an effect to HBM's particle
 payload. The name must be namespaced. On the server, `effect.send(level, x, y, z, data)` (also with a range, or at a
 `BlockPos`) and `effect.sendAround(level, x, y, z, data, centreX, centreY, centreZ, range)`; on the client,
@@ -155,7 +184,10 @@ hook field.
 | `world.Deaths.ALLOW` / `AFTER` | `BiPredicate<LivingEntity, DamageSource>` / `BiConsumer<LivingEntity, DamageSource>` | |
 | `world.Attacks.HANDLERS` / `INTERCEPTORS` | `BiConsumer<Player, Entity>` / `BiPredicate<Player, Entity>` | |
 | `world.ItemUses.FINISH` | `BiConsumer<LivingEntity, ItemStack>` | an item finished being used (food eaten) |
-| `world.ItemFirstUse.HANDLERS` | `InteractionResult use(ItemStack stack, UseOnContext context)` | |
+| `world.BlockChanges.HANDLERS` | `void onChange(ServerLevel level, BlockPos pos, BlockState oldState, BlockState newState)` | every block state change by any cause, not world generation; runs for every change, so keep it cheap; register with `BlockChanges.onChange` |
+| `world.ItemClicks.HANDLERS` | `InteractionResult use(Player player, InteractionHand hand)` | a right-click with an item, before the item's own `use`; a consuming or failing result ends the click; both sides; register with `ItemClicks.register` |
+| `world.ItemFirstUse.HANDLERS` | `InteractionResult use(ItemStack stack, UseOnContext context)` | 1.7 `onItemUseFirst`: before the block's and the item's own use on a block; both sides; register with `ItemFirstUse.register` |
+| `world.ItemFirstUse.BLOCK_CLICKS` | `InteractionResult use(Player player, InteractionHand hand, BlockHitResult hit)` | a right-click on a block with any hand, empty included, asked before the item handlers; register with `ItemFirstUse.registerBlockClick` |
 | `world.Sleeps.ATTEMPTS` | `BiConsumer<Player, BlockPos>` | |
 | `world.Weathers.PROVIDERS` | `@Nullable State weather(ServerLevel level)` | register with `Weathers.register` |
 | `world.ChestLoot.INJECTIONS` | `ChestLoot.Injection` | add a pool with `ChestLoot.inject(String table, String name, int rollsMin, int rollsMax, int emptyWeight, List<ChestLoot.Entry> entries)`; `Entry(Supplier<? extends Item> item, int min, int max, int weight)` |
@@ -170,6 +202,17 @@ hook field.
 BlockPos soilPos, BlockState soil, BlockState plant)` returns a `Verdict` (1.7 `canSustainPlant`), and
 `isLightTransparent(BlockState state)` returns `true` for 1.7 light opacity 0. Both must depend on their arguments only.
 
+### Rules for block entities
+
+- **Moving structures (Sable / Create Aeronautics).** A block on a moving structure sits at one position in the block
+  grid and is seen far away. A block entity that compares its `worldPosition` with players or entities, spawns an entity,
+  scans or targets goes through `world.SubLevels.toWorld(level, pos)` first (also `toWorldBlock`, `distanceSq`,
+  `velocity`). A removal hook that drops, explodes or rebuilds checks `SubLevels.isMoving(level)` and does nothing while
+  a structure is being moved. Off a moving structure every call is a no-op.
+- **Keeping chunks loaded.** Hold a chunk with `world.Chunks.claimTicking(level, chunkX, chunkZ)` and drop it with
+  `releaseTicking`; count your own holders. Never use vanilla's shared forced-chunk ticket: releasing it also drops other
+  holders' forced chunks.
+
 ### Client
 
 | Hook | Listener | Notes |
@@ -183,7 +226,8 @@ BlockPos soilPos, BlockState soil, BlockState plant)` returns a `Verdict` (1.7 `
 | `client.Lightmaps.MODIFIERS` | `Lightmaps.Modifier` (`active(ClientLevel)`, `add(ClientLevel, int block, int sky, int[] rgb)`) | light map changes |
 | `client.Capes.PROVIDERS` | `@Nullable Identifier cape(UUID id, String name)` | player capes |
 | `client.AttackInput.GUARDS` | `BooleanSupplier` | |
-| `render.BlockOutlines.SUPPRESSORS` | `BooleanSupplier` | |
+| `render.BlockOutlines.SUPPRESSORS` | `BooleanSupplier` | skips vanilla's block outline while any answers `true`; register with `BlockOutlines.suppressWhen` |
+| `render.BlockOutlines.SHAPES` | `@Nullable VoxelShape outline(Level level, BlockPos pos, BlockState state)` | replaces the hovered block's outline (a whole multiblock), null keeps its own; register with `BlockOutlines.replaceShape` |
 | `render.Skyboxes.SKYBOXES` | `Skyboxes.Skybox` | see [Dimensions](../dimensions/) |
 | `world.Skies.MODIFIERS` | `Skies.Modifier` | see [Dimensions](../dimensions/) |
 

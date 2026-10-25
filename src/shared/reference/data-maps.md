@@ -60,8 +60,8 @@ overview](../../data-maps/overview/) explains the file format, merging and patch
 | `hbm:custom_nuke` | `hbm/value_maps/fluid/custom_nuke.json` | fluid | object (`type`, `value`, `op`) | [Weapons and satellites](../../data-maps/weapons-and-satellites/#by-fluid-cell) |
 | `hbm:satellite` | `hbm/value_maps/item/satellite.json` | item | string (satellite type) | [Weapons and satellites](../../data-maps/weapons-and-satellites/#satellite) |
 
-HBM ships a file for every map except `hbm:hazard_multiplier`, `hbm:faraday_armor`, `hbm:radiation_decay` and
-`hbm:fluid_deposit_states`. Those four are empty until a datapack or addon fills them; the behaviour they change
-falls back to HBM's code rules.
+HBM ships a file for every map except `hbm:hazard_multiplier`, `hbm:faraday_armor`, `hbm:radiation_decay`,
+`hbm:fluid_deposit_states` and both `hbm:ambient_radiation` maps. Those are empty until a datapack or addon fills them;
+the behaviour they change falls back to HBM's code rules and `hbm.cfg`.
 
 A patch of any of these goes in `data/<your ns>/value_maps/patches/hbm/<registry>/<map>.json`.

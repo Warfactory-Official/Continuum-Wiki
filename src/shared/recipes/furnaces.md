@@ -9,10 +9,10 @@ Tables for the heated furnaces, from the alloy furnaces to the arc furnace's mol
 
 | Type | Machines | Schema | Picked by | Rows in HBM |
 |---|---|---|---|---|
-| `hbm:blast_furnace` | Blast Furnace | [generic](../common-fields/#generic-schema) | first match in `order` | 15 |
+| `hbm:blast_furnace` | Blast Furnace | [generic](../common-fields/#generic-schema) | first match in `order` | 18 |
 | `hbm:difurnace` | Blast Furnace (LEGACY), Nuclear Blast Furnace (LEGACY) | [generic](../common-fields/#generic-schema) | first match in `order` | 14 |
 | `hbm:combination` | Combination Furnace | own | first match in `order` | 53 |
-| `hbm:rotary_furnace` | Rotary Furnace | own | first match in `order` | 12 |
+| `hbm:rotary_furnace` | Rotary Furnace | own | first match in `order` | 13 |
 | `hbm:arc_furnace` | Electric Arc Furnace | own | first row in `order` per input and mode | 79 |
 
 ## blast_furnace
@@ -31,7 +31,7 @@ not used (the furnace burns fuel and makes flue gas).
   ],
   "output_items": [{ "id": "hbm:ingot_firebrick", "count": 8 }],
   "duration": 800,
-  "order": 13
+  "order": 16
 }
 ```
 

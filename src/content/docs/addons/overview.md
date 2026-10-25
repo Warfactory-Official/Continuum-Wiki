@@ -49,6 +49,8 @@ shape on every node, so HBM and its addons call one API and never branch on the 
 - hooks (`Hook`, `Verdict`) for vanilla behaviour,
 - dimension, sky and weather helpers,
 - the neutral scripting surface (`Scripts`) that its KubeJS adapter turns into KubeJS bindings,
+- exposure of your blocks to other mods: fluid and item capabilities, AE2, Jade and CC: Tweaked
+  ([Fluids and networks](../fluids-and-networks/#other-mods)),
 - GameTests that run on every loader.
 
 Golem Core's shared build scripts, copied into your project's `gradle/golem/`, convert one resource tree for every node. See
@@ -76,7 +78,7 @@ Much of HBM is data. Before you write an addon, check whether a datapack or a sc
 4. [Registering content](../registering-content/): the registration chain, Dejson, client registrations and payloads.
 5. [Substitution](../substitution/): replacing an HBM block or item under its own id.
 6. [Recipes and data](../recipes-and-data/): recipe tables and generated data.
-7. [Fluids and networks](../fluids-and-networks/): fluids, traits, and connecting to ducts and cables.
+7. [Fluids and networks](../fluids-and-networks/): fluids, traits, connecting to ducts and cables, and other mods' pipes, storage and overlays.
 8. [Hooks](../hooks/): `Hook`, `Environment`, `HbmEvents` and Golem Core's hooks.
 9. [Registries](../registries/): materials, bullets, hazards, record registries and other extension points.
 10. [Data maps in Java](../java-data-maps/): declaring and reading data maps.

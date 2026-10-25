@@ -48,12 +48,11 @@ the cell. HBM ships 5 entries.
 
 ## satellite
 
-`data/hbm/value_maps/item/satellite.json`. Registry: item. HBM ships 12 entries.
+`data/hbm/value_maps/item/satellite.json`. Registry: item. HBM ships 13 entries.
 
 Value: a string, the satellite type the item puts into orbit. HBM's types are `mapper`, `scanner`, `radar`, `miner`,
-`lunar_miner`, `precision_laser`, `laser`, `resonator`, `relay`, `detector`, `ray_scan`, `horizons` and `science`
-(no HBM item launches `science`). Addons name
-theirs `<namespace>:<name>`.
+`lunar_miner`, `precision_laser`, `laser`, `resonator`, `relay`, `detector`, `ray_scan`, `horizons` and `science`. Addons name theirs
+`<namespace>:<name>`.
 
 ```json title="data/hbm/value_maps/item/satellite.json (part)"
 {

@@ -27,7 +27,9 @@ load, with an error naming the field.
 
 How many times a feature tries per chunk, and whether it runs at all, is usually decided by its placed feature, through
 the [`hbm:config`](#placement-reading-hbmcfg) step that reads `hbm.cfg`. Where to place features on NeoForge and Forge is
-set by biome modifiers; on Fabric by the `hbm:has_feature/*` biome tags (see [What a datapack can
+set by biome modifiers; Fabric has no biome modifier files, so there HBM adds each feature in code to the biomes and biome
+tags its modifier names (`#minecraft:is_overworld`, `#hbm:has_feature/foxglove`, ...), and a datapack changes the
+placement through those tags (see [What a datapack can
 change](../../../datapacks/overview/#vanilla-and-loader-data-hbm-ships)).
 
 ## Value types
@@ -342,7 +344,7 @@ many; `wipe_dust` (float, 0.25): dust above this wipes every plant.
 
 ### Scattered blocks
 
-These only generate while `hbm.cfg` `1.00_enableDungeonSpawn` allows dungeons.
+These only generate while `hbm.cfg` `1.03_enableDungeonSpawn` allows dungeons.
 
 **`hbm:locked_safe`**: a locked safe on a torch-safe block, filled from one weighted tier, pins 1..999, cave spiders
 `spider_chance` in `spider_bound`.
@@ -398,7 +400,7 @@ is how the [`hbm.cfg` ore and structure keys](../../reference/config/) take effe
 | Field | Type | Meaning |
 |---|---|---|
 | `key` | string | An `hbm.cfg` key, such as `2.00_uraniumSpawnrate`. An unknown key places nothing and logs once. |
-| `mode` | string | `count`: repeat the position value × `multiplier` times. `chance`: keep it with a chance of 1 in value. `switch`: keep it while the value is not 0. A value of 0 or less places nothing. |
+| `mode` | string | `count`: repeat the position value × `multiplier` times. `chance`: keep it with a chance of 1 in value. `switch`: keep it while the value is not 0. With `count` and `chance`, a value of 0 or less places nothing. |
 | `multiplier` | integer | With `count`, multiplies the value. Optional, default 1. |
 
 ```json title="data/hbm/worldgen/placed_feature/ore_uranium.json (part)"

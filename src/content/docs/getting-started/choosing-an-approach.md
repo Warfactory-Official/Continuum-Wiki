@@ -17,12 +17,17 @@ Use a datapack to:
 - add machine recipes, or remove HBM's ([Machine recipes](../../datapacks/recipes/overview/), [Removing recipes](../../datapacks/recipes/removing-recipes/))
 - change fluid properties ([Fluids](../../datapacks/data/fluids/))
 - change per-item, per-block and per-fluid values such as hazards, fuels and armour protection ([Data maps](../../datapacks/data-maps/overview/))
-- change what nuclear fallout turns blocks into ([Fallout transform](../../datapacks/data/fallout-transform/)) and HBM's
-  loot pools ([Item pools](../../datapacks/data/item-pools/))
-- add blocks or items to the tags HBM reads, and change HBM's worldgen and structures with vanilla files
-  ([Datapack overview](../../datapacks/overview/))
+- change what nuclear fallout turns blocks into ([Fallout transform](../../datapacks/data/fallout-transform/)), HBM's
+  item pools ([Item pools](../../datapacks/data/item-pools/)), and mob drops and structure loot
+  ([Advancements and loot](../../datapacks/data/advancements-and-loot/))
+- add blocks or items to the tags HBM reads, and change HBM's world features and structures
+  ([World generation](../../datapacks/data/worldgen/), [Datapack overview](../../datapacks/overview/))
 
 A datapack cannot add new items, blocks or fluids by itself, and cannot run code when something happens.
+
+Some settings are config files, not datapacks: 1.7's `hbm.cfg` (recipe modes, structure weights, radiation switches)
+and `hbmMachines.json` (machine power, tanks and speeds). They apply to the whole game or server. See
+[Config files](../../datapacks/reference/config/) and [Machine settings](../../datapacks/reference/machine-settings/).
 
 ## KubeJS scripts
 

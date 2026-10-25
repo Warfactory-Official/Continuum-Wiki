@@ -9,8 +9,8 @@ The tables of the three assembly machines.
 
 | Type | Machines | Schema | Picked by | Rows in HBM |
 |---|---|---|---|---|
-| `hbm:assembly_machine` | Assembly Machine, Assembly Factory | [generic](../common-fields/#generic-schema) | selector, saves `name` | 342 |
-| `hbm:precision_assembler` | Precision Assembly Machine | [generic](../common-fields/#generic-schema) | selector, saves `name` | 52 |
+| `hbm:assembly_machine` | Assembly Machine, Assembly Factory | [generic](../common-fields/#generic-schema) | selector, saves `name` | 355 |
+| `hbm:precision_assembler` | Precision Assembly Machine | [generic](../common-fields/#generic-schema) | selector, saves `name` | 60 |
 
 Both tables use the generic schema with no extra fields. The player picks a recipe in the machine's selector, so
 `order` is the selector order. The machines save the recipe's `name`.
@@ -31,7 +31,7 @@ Both tables use the generic schema with no extra fields. The player picks a reci
   "output_items": ["hbm:machine_crystallizer"],
   "duration": 200,
   "power": 100,
-  "order": 90,
+  "order": 94,
   "input_items_expensive": [
     { "ingredient": "hbm:item_expensive_heavy_frame", "count": 2 },
     { "material": "titanium", "shape": "shell", "count": 3 },
@@ -47,7 +47,7 @@ Notes:
   `alt.plates` (alternative plate recipes), `discover.*` and `secret.*` pools, and, through `blueprint_pools_528`, the
   `528.*` pools that only apply in 528 mode. For example `assembly_machine/arty.json` has
   `"blueprint_pools_528": ["528.arty"]`: outside 528 mode it needs no blueprint.
-- **Expensive mode.** 84 rows have `input_items_expensive` and one has `input_fluids_expensive`.
+- **Expensive mode.** 88 rows have `input_items_expensive` and one has `input_fluids_expensive`.
 - **528 mode.** The overdrive upgrades only exist outside 528 mode (`"requires": ["!enable_528"]`); in 528 mode the
   precision assembler makes them.
 - **Auto-switch.** The cyclotron particle recipes share `auto_switch_group: "autoswitch.cyclotron"`, so a machine set
@@ -83,7 +83,7 @@ not recipe files and cannot be removed with a removal list.
   "duration": 200,
   "power": 2000,
   "blueprint_pools": ["528.strontium"],
-  "order": 6,
+  "order": 8,
   "requires": ["enable_528"]
 }
 ```
@@ -91,7 +91,7 @@ not recipe files and cannot be removed with a removal list.
 Notes:
 
 - Most rows are 1.7's 528-mode circuits and upgrades and carry `"requires": ["enable_528"]`; on a default config the
-  table only holds the two blueprint folder recipes.
+  table only holds the two blueprint folder recipes and the four RPA armor pieces.
 - A product is a weighted choice between the item and its broken form, `hbm:broken_item` with
   `item_data.broken_item`.
 - Each product has a `.recycle` row that takes the broken item (an `exact` ingredient with that `broken_item`) and

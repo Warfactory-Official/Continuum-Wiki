@@ -12,7 +12,7 @@ Tables for machines that compress, split, liquefy or solidify fluids.
 | `hbm:compressor` | Compressor, Compact Compressor | own | input fluid and pressure; last recipe id wins | 5 |
 | `hbm:electrolyser_fluid` | Electrolyser (fluid side) | own | input fluid; last recipe id wins | 8 |
 | `hbm:electrolyser_metal` | Electrolyser (metal side) | own | input item; last in `order` wins | 36 |
-| `hbm:liquefaction` | Industrial Liquefaction Machine | own | input item, then tag; first recipe id wins | 33 |
+| `hbm:liquefaction` | Industrial Liquefaction Machine | own | input item, then tag; first recipe id wins | 34 |
 | `hbm:solidification` | Industrial Solidification Machine | own | input fluid; last recipe id wins | 47 |
 
 None of these tables has `requires`; only `electrolyser_metal` has `order`.

@@ -76,7 +76,8 @@ changing the config. See [Requires](../../datapacks/recipes/common-fields/#requi
 
 The mod is written once against 26.1 and built for 1.21.1 and 1.20.1 through Golem Core. HBM's own data formats
 (machine recipes, data maps, fluid properties, item pools, fallout rules) are the same on all targets. Only
-vanilla's and the loaders' own formats differ by version:
+vanilla's and the loaders' own formats differ by version, plus one HBM case: raw item data on a machine recipe output,
+which takes the version's own spelling ([Raw item data](../../datapacks/recipes/common-fields/#raw-item-data)):
 
 | | 26.1 | 1.21.1 | 1.20.1 |
 |---|---|---|---|
@@ -84,7 +85,7 @@ vanilla's and the loaders' own formats differ by version:
 | Recipe folder | `recipe/` | `recipe/` | `recipes/` |
 | Other vanilla folders | singular (`loot_table/`, `tags/item/`) | singular | plural (`loot_tables/`, `tags/items/`) |
 | Vanilla crafting ingredient | `"minecraft:stick"` | `{"item": "minecraft:stick"}` | `{"item": "minecraft:stick"}` |
-| Item stack extra data | components | components | NBT `tag` |
+| Item stack extra data | `components` | `components` | NBT: `tag` in crafting results, `nbt` in HBM machine recipes |
 | Convention tag namespace | `c:` | `c:` | `c:` (Fabric), `forge:` and `c:` (Forge) |
 
 The [datapack overview](../../datapacks/overview/#version-differences) has the full folder list, and

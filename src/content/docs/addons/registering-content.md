@@ -150,6 +150,7 @@ public static final RegistryObject<NukeAntimatter> NUKE_ANTIMATTER = REG.block("
 | `oreOrRare(drop, min, max, rare, chance)` | silk touch: the block; else `rare` with `chance`; else `min..max` of `drop` |
 | `selfWhen(property, value)` | the block when a state property has a value |
 | `chance(drop, chance)` | `drop` with a chance |
+| `either(literal, whenSet, otherwise)` | `whenSet` while a [recipe flag](../recipes-and-data/#recipe-flags) literal holds, else `otherwise`; read at each drop |
 | `stacks(id, count, id, count, ...)` | fixed stacks |
 
 ## Tags and tabs
@@ -236,6 +237,22 @@ ClientRegistrations.renderers(r -> r.blockEntity(DriveProcessorBlocks.DRIVE_PROC
 renderer registration, so HBM's renderer coverage check sees it. Call it on the client before the loader registers
 renderers. For HBM's own registries of client objects (custom item renderers, tracers, bomber skins), see
 [Registries](../registries/).
+
+### Looks that depend on the world
+
+A block whose look depends on where it stands (a paint, connections, nozzles) belongs in the chunk mesh, never in a block
+entity renderer, which draws a block lit from inside itself (dark). Golem Core's `dev.golem.core.render.Disguises.register(block,
+look)` takes a `Disguises.Look`: `disguise(...)` (another block's state drawn in its place), `overlays(...)` (faces just
+outside the cube) and `meshKey(...)` (positions with equal keys share one built mesh). A tint that reads the block entity
+overrides `BlockTint.colorInWorld(state, level, pos)`. When the data a look reads changes, call `remesh()` (a protected
+method of `CompatBlockEntity`) on the client.
+
+From any cell of an HBM multiblock, `com.hbm.blocks.multiblock.MultiblockSurface.coreOfAny(level, pos)` finds the core.
+
+Two client calls depend on GemRender or another mod: `client.DynamicLights.register(provider)` adds point and spot lights,
+but only while `DynamicLights.shading()` is true (GemRender present, no shader pack), so keep a fallback;
+`render.BodyAnimations.animates(entity)` is true when a mod such as Mo' Bends poses the player itself, so armour drops its
+own crouch offsets.
 
 ## Network payloads
 

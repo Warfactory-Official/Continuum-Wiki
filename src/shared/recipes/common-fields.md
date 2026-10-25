@@ -38,7 +38,7 @@ listed on their pages.
   "icon": { "id": "hbm:waste_plate_mox" },
   "name_wrapper": "purex.recycle",
   "auto_switch_group": "autoswitch.plate",
-  "order": 15
+  "order": 16
 }
 ```
 
@@ -133,6 +133,7 @@ negate it. An entry is either a config flag or `#` plus an item tag:
 | `lbsm_simple_armor` | LBSM and `LBSM_recipeSimpleArmor` are on. |
 | `lbsm_simple_tool` | LBSM and `LBSM_recipeSimpleTool` are on. |
 | `lbsm_simple_medicine` | LBSM and `LBSM_recipeSimpleMedicine` are on. |
+| `raw_ores` | `01_general / 1.90_enableRawOres` is on (port-only, on by default: metal ores drop raw ore items). |
 | `#<tag>` | The item tag has at least one item, e.g. `#c:nuggets/naquadria` (1.7's "only if another mod adds this ore dictionary entry" rows). |
 
 The config names are the category and key in `config/hbm.cfg`. An unknown flag name never holds: the row is left out
@@ -245,7 +246,7 @@ Where a table outputs a single item stack (most record tables), the form is:
 | Form | Meaning |
 |---|---|
 | `"id"` | One item. |
-| `{"id", "count", "item_data"}` | `count` defaults to 1; `item_data` is optional [item data](#item-data). |
+| `{"id", "count", "item_data"}` | `count` defaults to 1; `item_data` is optional [item data](#item-data). Also takes [raw item data](#raw-item-data). |
 
 Some record tables take an **item output without data**: `"id"` or `{"id", "count"}` only. Each page says which form a
 field takes.
@@ -270,9 +271,9 @@ data components):
 
 ### Raw item data
 
-A generic row's outputs and `icon` may also carry data HBM has no name for (another mod's item, a block entity inside
+A generic row's outputs and `icon`, and every field that takes an [item stack](#item-stacks), may also carry data HBM has no name for (another mod's item, a block entity inside
 a crate), in the Minecraft version's own spelling: `"components"` (a data component map, 1.20.5+) or `"nbt"` (an SNBT
-string, 1.20.1). The two are not interchangeable, so such a file works on one side of 1.20.5 only; prefer `item_data`
+string or an NBT object, 1.20.1). The two are not interchangeable, so such a file works on one side of 1.20.5 only; prefer `item_data`
 where it can state the value. KubeJS writes this form for you when an output stack has data.
 
 ```json

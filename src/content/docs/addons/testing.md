@@ -37,21 +37,53 @@ public final class SpaceGameTests {
 | `suite.function(name, timeoutTicks, () -> body)` | declares a test; `body` is a `Consumer<GameTestHelper>` |
 | `suite.function(name, timeoutTicks, padding, () -> body)` | the same with `padding` blocks of free space around its plot (for large structures) |
 
-Initialise the suite classes from `declare()`.
+Keep every test class in your GameTest package (the one `golem.build.releaseJar.testPackages` names; classes whose name
+contains `GameTest` are dropped wherever they are). The uploaded jar leaves them out, and the `release-jar` task fails if
+any shipped class still names one. So never initialise or register a suite from your entry or `@Mod` class: the
+registrations sit in the test package too, where the loaders find them by annotation or entrypoint.
 
 A test whose entity leaves its plot (a rocket in flight) needs the chunks it moves through kept loaded:
 `GameTests.holdChunks(helper, minX, maxX, minZ, maxZ)` holds them, relative to the test's origin, until the returned
 `Runnable` runs. GameTest ticks run back to back, so a test that waits for chunk generation must wait in real time, not
 only in ticks.
 
+`dev.golem.core.gametest.GameTestHelpers` hides version differences inside test bodies: `blockEntity(helper, pos, type)`,
+`mockPlayer(helper, GameType)`, and `mockServerPlayerInLevel(helper)`, a survival server player in the level (vanilla's
+mock is creative, which skips drops, tool wear and damage).
+
 ### Registering per loader
 
-- **NeoForge / Forge:** from your `@Mod` constructor, `bus.addListener((RegisterGameTestsEvent event) ->
-  GameTests.register(event, TESTS))` (see [Mod entry](../mod-entry/)). The run also needs your namespace in
+- **NeoForge / Forge:** a class in the test package annotated `@EventBusSubscriber(modid = ...)` (Forge:
+  `@Mod.EventBusSubscriber(modid = ..., bus = Bus.MOD)`) initialises the suites on `FMLConstructModEvent` and calls
+  `GameTests.register(event, TESTS)` on `RegisterGameTestsEvent`. The run also needs your namespace in
   `neoforge.enabledGameTestNamespaces` / `forge.enabledGameTestNamespaces`.
-- **Fabric 26.1:** Golem Core registers every declared suite itself.
-- **Fabric below 26.1:** a `fabric-gametest` entrypoint with a `@GameTestGenerator` that returns
-  `GameTests.functionsOf(TESTS)`:
+- **Fabric:** a second `golemcore:entry` in `fabric.mod.json`, a `ModEntry` in the test package whose `declare()`
+  initialises the suites. On 26.1 Golem Core then registers them itself.
+- **Fabric below 26.1:** also a `fabric-gametest` entrypoint with a `@GameTestGenerator` that returns
+  `GameTests.functionsOf(TESTS)`. `release-jar` removes both entrypoint lines from the uploaded `fabric.mod.json`.
+
+```java title="com/ntmspace/gametest/GameTestSetup.java (NeoForge part)"
+//? if neoforge {
+@EventBusSubscriber(modid = NtmSpace.MOD_ID)
+public final class GameTestSetup {
+
+    @SubscribeEvent
+    public static void construct(FMLConstructModEvent event) {
+        SpaceGameTests.initAll();
+    }
+
+    @SubscribeEvent
+    public static void register(RegisterGameTestsEvent event) {
+        GameTests.register(event, SpaceGameTests.TESTS);
+    }
+}
+//?}
+```
+
+```json title="fabric.mod.json (entrypoints)"
+"golemcore:entry": ["com.ntmspace.SpaceEntry", "com.ntmspace.gametest.GameTestEntry"],
+"fabric-gametest": ["com.ntmspace.platform.fabric.FabricGameTests"]
+```
 
 ```java title="com/ntmspace/platform/fabric/FabricGameTests.java"
 public final class FabricGameTests {
@@ -112,7 +144,8 @@ On Windows use Git Bash; `harness\harness.cmd` works too, but cmd mangles JSON a
 
 The regular Golem Core jar has no harness in it. The wrapper downloads the CLI from the Golem Core release named by
 `deps.golemcore` in `gradle.properties`, and harness launches run on that release's `-dev` jars (the same Golem Core with
-the harness kept). Writing scenarios and every
+the harness kept). Golem Core releases after 1.0.1 carry them; with `deps.golemcore=1.0.1` the harness cannot start.
+Writing scenarios and every
 command: `harness/README.md` in the [Golem Core repository](https://github.com/Warfactory-Official/Golem-Core).
 
 :::note

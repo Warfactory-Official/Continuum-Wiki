@@ -203,6 +203,10 @@ public final class CryoDistillTable extends GenericTableSource<GenericRecipe> {
 }
 ```
 
+A row's item output is HBM's `ItemSpec(item, count, data)`. A fourth argument, a Golem Core `ItemPatch`
+(`ItemPatch.of(stack)`), carries any other components (NBT below 1.20.5) under the key `ItemPatch.KEY`: a row never
+builds an `ItemStack` while it is read, because 26.1 decodes recipes before item components exist.
+
 ### Placing rows among HBM's
 
 A row placed among HBM's should take the position of the HBM row it follows or replaces, so it stays put when HBM
@@ -266,6 +270,11 @@ public final class SpaceRemovals extends RemovalSource {
 For fluid properties, write a `DataSource` with HBM's `FluidProperties.write/read` (and `writePatch/readPatch` for
 `fluid_property_patch`). Item pools use HBM's `ItemPool.PoolFile`. NTM: Space's sources are in
 `new-hbm-space/src/recipes/java/com/ntmspace/recipes/data/`.
+
+A loot function of your own, for loot tables you write or generate, is registered with
+`dev.golem.core.world.LootFunctions.register(ns, name, codec)` at mod construction; the codec's type implements
+`LootFunctions.Transform` (`ItemStack apply(ItemStack stack, LootContext context)`). It has no `conditions` of its own;
+gate it on the entry. HBM's `hbm:fill_fluid` is one.
 
 ### Listing the sources
 
@@ -341,9 +350,12 @@ public static void declare() {
 |---|---|
 | `compress(ns, id, ingredient, result)` / `decompress(...)` | the 3x3 block recipe and its reverse |
 | `smelt(ns, id, ingredient, result, experience[, count])` | a furnace recipe |
+| `blast(ns, id, ingredient, result, experience)` | a blast-furnace recipe (100 ticks) |
 | `shaped(ns, id, result[, count], pattern, key...)` | a shaped recipe; key is symbol, ingredient pairs; `#tag` allowed |
 | `shapeless(ns, id, result[, count], ingredients...)` | a shapeless recipe |
 | `componentShaped`, `componentShapeless`, `componentSmelt`, `copyShapeless` | recipes whose result or ingredients carry data components |
+| `componentShapedCopy(ns, id, result, copyFrom, ...)` | a shaped recipe whose result copies the components of the ingredient under the `copyFrom` symbol |
+| `special(ns, id, type)` | a file that only names a special recipe serializer, whose results are decided in Java |
 | `whenModLoaded(recipe, modId)` | loads the recipe only with that mod |
 | `requires(recipe, literals...)` | adds `"golem:requires"` (see recipe flags above) |
 

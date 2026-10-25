@@ -61,9 +61,12 @@ path inside is the datapack path without the leading `data/`, and `/reload` appl
 | An HBM fluid's properties | `kubejs/data/<ns>/fluid_property_patch/hbm/<fluid>.json` | [Fluids](../data/fluids/#patching-a-fluid-you-do-not-own) |
 | A KubeJS fluid's HBM properties | `kubejs/data/kubejs/fluid_property/<fluid>.json` | [Fluids](../data/fluids/), [Startup registry](../startup-registry/#fluids) |
 | Item pools, fallout, tags | as in a datapack, under `kubejs/data/` | [Item pools](../data/item-pools/), [Fallout transform](../data/fallout-transform/), [Tags](../data/tags/) |
+| Mob drops, structure loot | `kubejs/data/hbm/loot_table/entities/<mob>.json`, `.../loot_table/chests/<pool>.json` (`loot_tables` on 1.20.1) | [Advancements and loot](../data/advancements-and-loot/) |
+| World generation features | `kubejs/data/hbm/worldgen/configured_feature/<name>.json` | [World generation](../data/worldgen/) |
 
 `<ns>` is your own namespace, such as your pack's name. Use the patch folders above, not a copy of HBM's file at its own
-path: they apply after HBM's files on every loader, while a copy at HBM's path depends on pack order.
+path: they apply after HBM's files on every loader, while a copy at HBM's path depends on pack order. Loot tables and
+world generation files have no patch folder: change them with a copy at HBM's path.
 
 ## What this section covers
 

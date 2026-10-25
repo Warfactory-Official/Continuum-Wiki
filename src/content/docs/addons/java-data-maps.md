@@ -23,6 +23,10 @@ file is read from your jar at once, so the values exist before any world (menus,
 replaces them with the merged datapack values, and clients receive the same files. Call it at mod construction; a map
 declared twice throws.
 
+A map over a datapack registry (biomes, dimension types) uses `DataMaps.dynamic(owner, namespace, path, registryPath,
+() -> Registries.BIOME, codec)` with a registry path such as `"worldgen/biome"`, and is read by holder:
+`map.get(level.getBiome(pos))`.
+
 HBM declares its maps the same way:
 
 ```java title="com/hbm/api/data/HbmDataMaps.java (shortened)"
@@ -51,7 +55,7 @@ Integer speed = HbmDataMaps.BRICK_FURNACE_SPEED.get(inventory.getStackInSlot(0).
 
 HBM's maps are public constants in `com.hbm.api.data`: `HbmDataMaps`, `HazardDataMaps`, `ArmorDataMaps`,
 `ReactorDataMaps`, `WorldDataMaps`, `FluidDataMaps`, `SatelliteDataMaps`, `MachineDataMaps`, `DiFurnaceDataMaps`,
-`MachinePartDataMaps` and `DepositDataMaps`. Fluid maps are keyed by vanilla `Fluid`; for an HBM `FluidType` use
+`MachinePartDataMaps`, `RadiationDataMaps` and `DepositDataMaps`. Fluid maps are keyed by vanilla `Fluid`; for an HBM `FluidType` use
 `FluidType.getFluid()`.
 
 ## Merging and patching

@@ -22,16 +22,16 @@ The row counts are the files HBM generates for each table, including rows that o
 | `hbm:arc_furnace` | Electric Arc Furnace | own | [furnaces](../../recipes/furnaces/#arc_furnace) | 79 |
 | `hbm:arc_welder` | Arc Welder | own | [welding-and-ammo](../../recipes/welding-and-ammo/#arc_welder) | 42 |
 | `hbm:assembly_machine` | Assembly Machine, Assembly Factory | generic | [assembly-machine](../../recipes/assembly-machine/#assembly_machine) | 355 |
-| `hbm:blast_furnace` | Blast Furnace | generic | [furnaces](../../recipes/furnaces/#blast_furnace) | 15 |
+| `hbm:blast_furnace` | Blast Furnace | generic | [furnaces](../../recipes/furnaces/#blast_furnace) | 18 |
 | `hbm:breeder` | Breeding Reactor (LEGACY) | own | [nuclear](../../recipes/nuclear/#breeder) | 31 |
-| `hbm:centrifuge` | Centrifuge | own | [press-and-grinding](../../recipes/press-and-grinding/#centrifuge) | 160 |
+| `hbm:centrifuge` | Centrifuge | own | [press-and-grinding](../../recipes/press-and-grinding/#centrifuge) | 180 |
 | `hbm:chemical_plant` | Chemical Plant, Chemical Factory | generic | [chemical-plant](../../recipes/chemical-plant/#chemical_plant) | 90 |
 | `hbm:coker` | Coker Unit | own | [refinery-oil](../../recipes/refinery-oil/#coker) | 33 |
 | `hbm:combination` | Combination Furnace | own | [furnaces](../../recipes/furnaces/#combination) | 53 |
 | `hbm:compressor` | Compressor, Compact Compressor | own | [fluid-machines](../../recipes/fluid-machines/#compressor) | 5 |
 | `hbm:cracking` | Catalytic Cracking Tower | own | [refinery-oil](../../recipes/refinery-oil/#cracking) | 12 |
 | `hbm:crucible` | Crucible | own | [crucible](../../recipes/crucible/#crucible) | 13 |
-| `hbm:crystallizer` | Ore Acidizer | own | [press-and-grinding](../../recipes/press-and-grinding/#crystallizer) | 332 |
+| `hbm:crystallizer` | Ore Acidizer | own | [press-and-grinding](../../recipes/press-and-grinding/#crystallizer) | 347 |
 | `hbm:cyclotron` | Cyclotron | own | [nuclear](../../recipes/nuclear/#cyclotron) | 42 |
 | `hbm:difurnace` | Blast Furnace (LEGACY) | generic | [furnaces](../../recipes/furnaces/#difurnace) | 14 |
 | `hbm:electrolyser_fluid` | Electrolyser (fluid) | own | [fluid-machines](../../recipes/fluid-machines/#electrolyser_fluid) | 8 |
@@ -45,7 +45,7 @@ The row counts are the files HBM generates for each table, including rows that o
 | `hbm:lemegeton` | Lemegeton | own | [rituals-and-tools](../../recipes/rituals-and-tools/#lemegeton) | 37 |
 | `hbm:liquefaction` | Industrial Liquefaction Machine | own | [fluid-machines](../../recipes/fluid-machines/#liquefaction) | 34 |
 | `hbm:magic` | The Book of Boxcars | own | [rituals-and-tools](../../recipes/rituals-and-tools/#magic) | 7 |
-| `hbm:material_distribution` | Crucible, foundry, arc furnace (melting values) | own | [crucible](../../recipes/crucible/#material_distribution) | 43 |
+| `hbm:material_distribution` | Crucible, foundry, arc furnace (melting values) | own | [crucible](../../recipes/crucible/#material_distribution) | 54 |
 | `hbm:mixer` | Mixer | generic | [chemical-plant](../../recipes/chemical-plant/#mixer) | 50 |
 | `hbm:outgasser` | RBMK Irradiation Channel, Fusion Reactor Breeder (item) | generic | [fusion](../../recipes/fusion/#outgasser) | 19 |
 | `hbm:particle_accelerator` | Particle accelerator | own | [accelerator-and-computers](../../recipes/accelerator-and-computers/#particle_accelerator) | 11 |
@@ -62,7 +62,7 @@ The row counts are the files HBM generates for each table, including rows that o
 | `hbm:rock_mill` | Rock Mill | generic | [press-and-grinding](../../recipes/press-and-grinding/#rock_mill) | 11 |
 | `hbm:rotary_furnace` | Rotary Furnace | own | [furnaces](../../recipes/furnaces/#rotary_furnace) | 13 |
 | `hbm:sawmill` | Sawmill | own | [press-and-grinding](../../recipes/press-and-grinding/#sawmill) | 5 |
-| `hbm:shredder` | Shredder | own | [press-and-grinding](../../recipes/press-and-grinding/#shredder) | 332 |
+| `hbm:shredder` | Shredder | own | [press-and-grinding](../../recipes/press-and-grinding/#shredder) | 333 |
 | `hbm:silex` | SILEX | own | [silex](../../recipes/silex/) | 301 |
 | `hbm:soldering` | Soldering Station | own | [welding-and-ammo](../../recipes/welding-and-ammo/#soldering) | 43 |
 | `hbm:solidification` | Industrial Solidification Machine | own | [fluid-machines](../../recipes/fluid-machines/#solidification) | 47 |

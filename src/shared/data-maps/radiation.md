@@ -104,7 +104,7 @@ To make one of HBM's members vulnerable, replace the tag (`"replace": true`) wit
 The block tag `hbm:radiation_resistant` (`data/hbm/tags/block/radiation_resistant.json`) makes blocks seal radiation like
 HBM's concrete and lead walls: radiation does not pass through them. HBM ships it empty; its own shielding blocks seal by
 their code, and doors and hatches seal only while closed. A tagged block always seals. Tagged blocks show
-`[Radiation shielding]` in their tooltip.
+`[Radiation Shielding]` in their tooltip.
 
 ```json title="data/hbm/tags/block/radiation_resistant.json"
 {

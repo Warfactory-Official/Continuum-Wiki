@@ -17,7 +17,7 @@ Tables for the oil chain: refining, cracking, reforming, hydrotreating, coking a
 | `hbm:reforming` | Catalytic Reformer | own | input fluid; last recipe id wins | 9 |
 | `hbm:hydrotreating` | Hydrotreater | own | input fluid; last recipe id wins | 6 |
 | `hbm:coker` | Coker Unit | own | input fluid; last recipe id wins | 33 |
-| `hbm:pyrolysis` | Pyrolysis Oven | own | first match in a fixed list (below) | 40 |
+| `hbm:pyrolysis` | Pyrolysis Oven | own | first match in a fixed list (below) | 41 |
 
 All of these have their own record schema; none uses the generic fields. Fluids are
 [fluid stacks](../common-fields/#fluid-stacks) or plain fluid ids.

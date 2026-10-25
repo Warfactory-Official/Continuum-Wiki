@@ -38,11 +38,11 @@ All of these take a living entity (a player or a mob).
 | `addDigamma(entity, digamma)` | | Adds, clamps to 0..10, then applies as `setDigamma`. |
 | `getAsbestos(entity)` | integer | Asbestos exposure in ticks. 0 when the `HAZ_00_disableAsbestos` config is on. |
 | `setAsbestos(entity, ticks)` | | At `getMaxAsbestos()` or more, the entity takes 1000 asbestos damage and the counter resets to 0. |
-| `addAsbestos(entity, ticks)` | | Adds, then applies as `setAsbestos`. |
+| `addAsbestos(entity, ticks)` | | Adds, then applies as `setAsbestos`. A player also sees 1.7's "My lungs are burning." warning for three seconds. |
 | `getMaxAsbestos()` | integer | 72000 (one hour). |
 | `getBlackLung(entity)` | integer | Coal dust exposure in ticks. 0 when the `HAZ_01_disableCoaldust` config is on. |
 | `setBlackLung(entity, ticks)` | | At `getMaxBlackLung()` or more, the entity takes 1000 black lung damage and the counter resets to 0. |
-| `addBlackLung(entity, ticks)` | | Adds, then applies as `setBlackLung`. |
+| `addBlackLung(entity, ticks)` | | Adds, then applies as `setBlackLung`. A player also sees 1.7's "It's hard to breathe here." warning for three seconds. |
 | `getMaxBlackLung()` | integer | 144000 (two hours). |
 
 ### Contamination: the protected path

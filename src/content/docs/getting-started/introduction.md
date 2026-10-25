@@ -59,10 +59,32 @@ and addon copies add a note on where the files go.
 | React to nukes, missiles, explosions and radiation | KubeJS or addon mod | [KubeJS events](../../kubejs/events/), [Hooks](../../addons/hooks/) |
 | Read or set a player's radiation, or a chunk's | KubeJS or addon mod | [The HBM global](../../kubejs/hbm-global/) |
 | Add a new material for the foundry and crucible | KubeJS or addon mod | [Startup registry](../../kubejs/startup-registry/), [Registries](../../addons/registries/) |
+| Change mob drops and structure loot | Datapack (loot tables) | [Advancements and loot](../../datapacks/data/advancements-and-loot/) |
+| Change ore veins, deposits and other world features | Datapack | [World generation](../../datapacks/data/worldgen/) |
+| Change what pills, syringes and other consumables do | Datapack | [Consumable treatments](../../datapacks/data-maps/treatments/) |
+| Change machine power, tank sizes and speeds | Config file `hbmMachines.json` | [Machine settings](../../datapacks/reference/machine-settings/) |
 | Add new blocks, machines, fluids, dimensions | Addon mod | [Addon mods](../../addons/overview/) |
 
 Not sure which one fits? Read [Choosing an approach](../choosing-an-approach/). Then read [Key concepts](../concepts/)
 for the ids, units and rules every section relies on.
+
+## Other mods
+
+NTM - Continuum works with these mods when they are installed. None of them is required.
+
+| Mod | What it does with HBM | Targets |
+|---|---|---|
+| JEI, REI | Every machine table and 1.7 recipe tab as a recipe category | all six |
+| Jade | Machine power, heat and tanks in the block tooltip | all six |
+| KubeJS | Recipe scripts, the `HBM` global and `HBMEvents` ([KubeJS setup](../../kubejs/setup/)) | 26.1 NeoForge, 1.21.1 NeoForge, 1.20.1 Forge and Fabric |
+| CC: Tweaked | 1.7's OpenComputers components as peripherals | all six |
+| Applied Energistics 2 | Autocrafting into the recipe machines, ME storage of the mass storage unit, radioactive cells | 26.1 NeoForge, 1.21.1 NeoForge, 1.20.1 Forge and Fabric |
+| GemRender | Draws HBM's machine models faster, and the helmet lamp as a light | all six |
+| Create Aeronautics, Sable | HBM machines and effects on moving sub-levels | 1.21.1 NeoForge and Fabric (Aeronautics: NeoForge) |
+
+Other mods' pipes, importers and storage buses reach HBM machines through the loader's item and fluid capabilities, from
+the faces a hopper or a duct would use. Any mod's fluid works in HBM's tanks and ducts (see [Fluids are vanilla
+fluids](../concepts/#fluids-are-vanilla-fluids)).
 
 ## Sources
 

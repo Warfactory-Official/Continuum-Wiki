@@ -96,7 +96,8 @@ event.recipes.hbm.chemical_plant('kjs.lucky')
     .duration(20).power(10)
 ```
 
-On KubeJS 7 and 8 a typed item output has no chance, so a chance always needs the plain object form.
+On KubeJS 7 and 8 a typed item output has no chance, so a chance always needs the plain object form. On KubeJS 6
+(1.20.1), `Item.of('minecraft:diamond').withChance(0.05)` works too.
 
 ### Item data on outputs
 

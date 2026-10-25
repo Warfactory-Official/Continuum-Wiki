@@ -20,8 +20,8 @@ it uses one of HBM's own types instead. A datapack can use these types for its o
 
 ## Component ingredients
 
-The `component_*` types take an ingredient object instead of vanilla's. A plain string (`"hbm:billet_les"`) is one item.
-Otherwise:
+The `component_*` types take an ingredient object instead of vanilla's. Write it as an object, `{"items": ["hbm:billet_les"]}`
+for one item: a plain string (`"hbm:billet_les"`) is read only on 1.20.1. The fields:
 
 | Field | Type | Default | Meaning |
 |---|---|---|---|
@@ -46,7 +46,6 @@ Like `minecraft:crafting_shaped`, with component ingredients in `key`.
 | `key` | object | required | Pattern character to component ingredient. |
 | `result` | item stack | required | As vanilla's result (`{"id", "count", "components"}`). |
 | `copy_key` | string | none | A key character: the result keeps that ingredient's item data, so an upgraded crate keeps its contents. |
-| `category` | string | `misc` | As vanilla. |
 
 ```json title="data/mypack/recipe/crate_desh_upgrade.json"
 {
@@ -156,3 +155,11 @@ in HBM's data under the id shown. Remove one with a [removal list](../removing-r
 | `hbm:syringe_mkunicorn` | The secret MKU syringe: six ingredients in an arrangement shuffled by the world seed. Meteor-dungeon books each reveal one slot. |
 
 Retyping a duct back to a plain one is an ordinary shapeless recipe (`hbm:fluid_duct_neo_from_fluid_duct`).
+
+## In recipe books and viewers
+
+The four `component_*` types show in recipe books and in JEI, REI and EMI like vanilla crafting. The special recipes
+above do not: they are hidden from recipe books and from the crafting grid lists of viewers, and some have a tab of
+their own in JEI or REI. An addon that adds a crafting recipe type of its own should extend Golem Core's
+`CompatCustomRecipe` (or `ComponentShapedRecipe` and its siblings), not vanilla's `CustomRecipe`: EMI lists no
+crafting recipe of a `CustomRecipe` class, so such a recipe would be missing there even when it is not special.

@@ -13,7 +13,7 @@ read from a datapack folder:
 data/<ns>/fallout_transform/<name>.json
 ```
 
-HBM's defaults are `data/hbm/fallout_transform/default.json` (148 rules, priority 0).
+HBM's defaults are `data/hbm/fallout_transform/default.json` (153 rules, priority 0).
 
 ## File format
 

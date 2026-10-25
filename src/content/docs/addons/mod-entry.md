@@ -20,7 +20,7 @@ public interface ModEntry {
 | Phase | Runs | Use it to |
 |---|---|---|
 | `substitute()` | before any mod's registers are filled into the registries | replace another mod's block, item or other entry ([Substitution](../substitution/)) |
-| `declare()` | before any registry is filled; nothing in a registry exists yet | fill your registers; declare payloads, GameTests, recipe tables, data maps, fluids, hook listeners, script bindings |
+| `declare()` | before any registry is filled; nothing in a registry exists yet | fill your registers; declare payloads, recipe tables, data maps, fluids, hook listeners, script bindings |
 | `registered()` | after every mod's registers are in the registries | work that needs registered objects (furnace fuels, lookups by id) |
 
 Because your mod is ordered after `hbm`, your `declare()` runs after HBM's. Listeners registered in `declare()` are
@@ -43,7 +43,6 @@ public final class SpaceEntry implements ModEntry {
         SpaceBlocks.init();
         SpaceDimensions.init();
         SpaceEnvironment.init();
-        SpaceGameTests.initAll();
         // ... every registration class, in registry order
     }
 
@@ -70,7 +69,6 @@ public final class NeoForgeInit {
     public NeoForgeInit(IEventBus bus) {
         ModEntries.start(new SpaceEntry());
         if (Platform.isClient()) SpaceClient.init();
-        bus.addListener((RegisterGameTestsEvent event) -> GameTests.register(event, SpaceGameTests.TESTS));
     }
 }
 //?}
@@ -81,6 +79,9 @@ public final class NeoForgeInit {
 The same call from the Forge `@Mod` constructor. Forge constructs mods in parallel; `ModEntries.start` waits until every
 Golem-based mod you order yourself `AFTER` has run its declarations, so Forge declares in NeoForge's order.
 
+GameTests are not registered here: the uploaded jar drops the test classes, so the entry and `@Mod` classes must not
+name them (see [Testing](../testing/#registering-per-loader)).
+
 ```java title="com/ntmspace/platform/forge/ForgeInit.java"
 //? if forge {
 /*@Mod(NtmSpace.MOD_ID)
@@ -89,8 +90,6 @@ public final class ForgeInit {
     public ForgeInit() {
         ModEntries.start(new SpaceEntry());
         if (Platform.isClient()) SpaceClient.init();
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((RegisterGameTestsEvent event) ->
-                GameTests.register(event, SpaceGameTests.TESTS));
     }
 }
 *///?}

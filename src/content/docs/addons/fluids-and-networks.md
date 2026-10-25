@@ -198,7 +198,48 @@ public class TileEntityAirScrubber extends TileEntityMachineBase implements IFlu
 
 ### Other mods
 
-Other mods' pipes reach HBM machines through `com.hbm.capability.ForeignFluids`, which exposes a machine's own
-`getDemand`/`transferFluid` and `getFluidAvailable`/`useUpFluid` on each loader's fluid capability (Golem Core
-`FluidExposure`), at pressure 0 only. It is registered for blocks in the `hbm` namespace only, so it does not cover an
-addon's blocks. HBM's own duct network does not reach foreign tanks.
+HBM's ducts deliver into other mods' tanks themselves (`com.hbm.capability.ForeignFluidReceiver`): receive only, at
+pressure 0, so a duct never pulls from a foreign tank. Cables likewise feed other mods' energy machines.
+
+The other direction, other mods' pipes, storage networks and autocrafters reaching **your** blocks, goes through Golem
+Core's exposure facades. HBM registers them only for blocks in the `hbm` namespace, so an addon makes the same calls for
+its own blocks. Call each once from `declare()`; the block predicate is evaluated when the loader asks, so it may name
+blocks your registration has not filled yet.
+
+| Call | Exposes |
+|---|---|
+| `FluidExposure.exposeBlocks(ports, blocks)` (`dev.golem.core.fluid`) | a block's tanks on each loader's fluid capability (NeoForge `Capabilities`, Forge `ForgeCapabilities`, Fabric `FluidStorage`) |
+| `FluidExposure.exposeItems(contract, items)` | fluid container items |
+| `ItemExposure.exposeAutomation(blocks, contentsAt)` (`dev.golem.core.world`) | a block's container on a face, by a hopper's rules: pipes and storage networks such as Refined Storage |
+| `ItemExposure.exposeContents(blocks, contentsAt)` | a side-less, read-only view for viewers such as hologram mods |
+| `CraftingMachines.exposeBlocks(ports, blocks)` (`dev.golem.core.autocraft`) | a machine AE2 pattern providers push whole jobs into (`CraftingMachine`: `acceptsPlans()`, `push(CraftingPlan)`, `icon()`) |
+| `ItemStores.exposeBlocks(ports, blocks)` (`dev.golem.core.storage`) | a block an AE2 storage bus reads as storage (`ItemStore`: `insert`, `extract`, `list`, `name`) |
+
+HBM's own answers are public and work for any block entity on HBM's interfaces, so an addon can reuse them:
+
+```java
+Predicate<Block> mine = block -> block instanceof EntityBlock
+        && MyAddon.MOD_ID.equals(BuiltInRegistries.BLOCK.getKey(block).getNamespace());
+FluidExposure.exposeBlocks(ForeignFluids.PORTS, mine);              // the machine's getDemand/transferFluid, pressure 0
+ItemExposure.exposeAutomation(mine, ForeignItems::hopperContainerAt);
+```
+
+`ForeignFluids.PORTS` offers a face only where one of the machine's ports reaches it, with the same roles as for a duct.
+For a recipe-module machine, `com.hbm.handler.ae2.NTMCraftingMachine(blockEntity, module, blueprintSlot)` is HBM's
+`CraftingMachine`. AE2 exists on the NeoForge nodes and both 1.20.1 nodes (`CraftingMachines.available()`); on 1.20.1
+Forge the AE2 and item facades reach only blocks with a block entity. Fabric's transfer API already reads `Container`
+block entities without any call.
+
+### Block-info overlays, computers and storage cells
+
+- **Jade.** Golem Core's `dev.golem.core.info.BlockInfo` declares overlay lines without naming Jade:
+  `BlockInfo.gauges(Class<T> type, (be, out) -> out.accept(Gauge.of(label, value, max, unit, fromColor, toColor)))`,
+  `BlockInfo.tanks(type, (be, out) -> out.accept(new Tank(fluid, mB, capacity)))` and `BlockInfo.redirect((level, pos) ->
+  corePos)` (a multiblock part shows its core). Call from `declare()`. HBM declares power for every
+  `IEnergyHandlerMK2` and tanks for every `IFluidUserMK2`, so a machine on HBM's interfaces gets them with no call.
+- **CC: Tweaked.** Register a block entity's methods with `ComputerComponents.register` (see
+  [Registries](../registries/#other-extension-points)); HBM exposes every registered block. For a peripheral of your own,
+  `dev.golem.core.computer.PeripheralExposure.exposeBlocks(ports, blocks)` takes a `PeripheralPorts` that returns an
+  `IPeripheral` per position and side.
+- **AE2 cells.** `dev.golem.core.storage.CellContents.items(cell)` lists what an AE2 storage or portable cell holds
+  (`Stored(type, count)`), empty without AE2 (HBM uses it to make cells radioactive).

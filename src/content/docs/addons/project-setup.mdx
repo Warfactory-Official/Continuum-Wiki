@@ -191,10 +191,11 @@ loomx.loom_version=1.16.3`} />
 
 Keys only some nodes set (`deps.jei`, `deps.gemrender_flywheel`, `deps.neoforge_floor`, `deps.lwjgl`) get no
 placeholder: a node that does not set one would read the text `[VERSIONED]`. `golem.build.releaseJar.testPackages` names
-the package `release-jar` strips from the uploaded jar, and must be set even before you have GameTests. The
+the package `release-jar` strips from the uploaded jar, and must be set even before you have GameTests; the task fails
+if a shipped class still names a stripped one. The
 `mod.homepage`, `mod.sources` and `mod.issues` links fill the metadata (see [Mod metadata](#mod-metadata)).
 
-NTM: Space also sets these, needed only if you use HBM's item-model vocabulary (`hbm:machine_obj`, `hbm:custom_item`,
+NTM: Space and the generated template also set these, needed only if you use HBM's item-model vocabulary (`hbm:machine_obj`, `hbm:custom_item`,
 `hbm:model_state`) or smelting recipes whose result carries a count or components:
 
 ```properties
@@ -265,7 +266,7 @@ val modId = prop("mod.id")
 
 group = prop("mod.group")
 version = "${prop("mod.version")}+$mcVersion"
-base.archivesName = "$modId-neoforge-$mcVersion"
+base.archivesName = "$modId-neoforge"
 
 java { toolchain.languageVersion = JavaLanguageVersion.of(javaVersion) }
 
@@ -397,7 +398,8 @@ apply(from = rootProject.file("gradle/golem/mod-metadata.gradle.kts"))
 apply(from = rootProject.file("gradle/golem/publish.gradle.kts"))
 ```
 
-Golem Core and HBM go on the plain classpath: their own mixin configs are still applied there. NTM: Space's file adds JEI
+Golem Core and HBM go on the plain classpath: their own mixin configs are still applied there. The generated template
+also adds JEI where the node sets `deps.jei_mc` and `deps.jei`. NTM: Space's file adds JEI
 (`compileOnly` API jars, the full jar as a dev-only runtime mod), the dev-only probe addon's source set, KubeJS dev runs
 (`-Pkubejs.run=true`) and the data generator (below).
 
@@ -421,7 +423,7 @@ val modId = prop("mod.id")
 
 group = prop("mod.group")
 version = "${prop("mod.version")}+$mcVersion"
-base.archivesName = "$modId-fabric-$mcVersion"
+base.archivesName = "$modId-fabric"
 
 java { toolchain.languageVersion = JavaLanguageVersion.of(javaVersion) }
 
@@ -688,8 +690,8 @@ On Fabric, list your `ModEntry` under `golemcore:entry` (not `main`) and depend 
 ```
 
 With a homepage, add `"contact": {"homepage": "@golem.homepage@", "sources": "@golem.sources@", "issues": "@golem.issues@"}`.
-Add a `client` entrypoint for client set-up, and a `fabric-gametest` entrypoint for GameTests below 26.1 (see
-[Mod entry](../mod-entry/#fabric) and [Testing](../testing/#registering-per-loader)).
+Add a `client` entrypoint for client set-up. GameTests add a second `golemcore:entry` and, below 26.1, a
+`fabric-gametest` entrypoint (see [Mod entry](../mod-entry/#fabric) and [Testing](../testing/#registering-per-loader)).
 
 Every loader needs `pack.mcmeta`. The pack format key changed in 26.1 (`min_format`/`max_format` instead of
 `pack_format`), so the buildscripts fill it in:
@@ -732,6 +734,6 @@ You need a JDK (17 or newer) to start Gradle; the toolchain resolver downloads t
 ./gradlew "Reset active project"       # back to the vcsVersion node before committing
 ```
 
-Jars land in `versions/<node>/build/libs/`; the copies without GameTests, for uploading, in
-`versions/<node>/build/release/`. Stonecutter rewrites `src/` in place for the active node. Commit only with the
+Jars land in `versions/<node>/build/libs/` as `<mod id>-<loader>-<version>+<minecraft>.jar`; the copies without
+GameTests, for uploading, in `versions/<node>/build/release/`. Stonecutter rewrites `src/` in place for the active node. Commit only with the
 `vcsVersion` node active.

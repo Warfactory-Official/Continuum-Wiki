@@ -82,7 +82,7 @@ as the icon.
   ],
   "outputs": [{ "id": "hbm:chimney_brick" }],
   "tier": 2,
-  "order": 87
+  "order": 88
 }
 ```
 
@@ -96,7 +96,7 @@ as the icon.
     { "id": "hbm:fragment_lanthanium", "chance": 0.1 }
   ],
   "tier": 2,
-  "order": 202
+  "order": 203
 }
 ```
 

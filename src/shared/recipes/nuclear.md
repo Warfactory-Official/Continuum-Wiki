@@ -9,7 +9,7 @@ Tables for fuel reprocessing, breeding, waste decay, particle exposure and the c
 
 | Type | Machines | Schema | Picked by | Rows in HBM |
 |---|---|---|---|---|
-| `hbm:purex` | PUREX | [generic](../common-fields/#generic-schema) | selector, saves `name` | 58 |
+| `hbm:purex` | PUREX | [generic](../common-fields/#generic-schema) | selector, saves `name` | 59 |
 | `hbm:breeder` | Breeding Reactor (LEGACY) | own | input item; last in `order` wins | 31 |
 | `hbm:storage_drum` | Nuclear Waste Disposal Drum | own | input item; first recipe id wins | 32 |
 | `hbm:exposure_chamber` | Exposure Chamber | [generic](../common-fields/#generic-schema) | first match in `order` | 4 |
@@ -40,7 +40,7 @@ the selected recipe (`power` × 100).
   "icon": { "id": "hbm:watz_pellet_depleted_nqd" },
   "name_wrapper": "purex.recycle",
   "auto_switch_group": "autoswitch.watz",
-  "order": 48,
+  "order": 49,
   "requires": ["#c:nuggets/naquadria"]
 }
 ```

@@ -119,7 +119,7 @@ when emptied.
 
 ## fluid_containers
 
-`data/hbm/value_maps/fluid/fluid_containers.json`. Registry: fluid. HBM ships 61 entries.
+`data/hbm/value_maps/fluid/fluid_containers.json`. Registry: fluid. HBM ships 62 entries.
 
 Which portable containers a fluid comes in, and their colours. Every field is an optional `"#RRGGBB"` colour; a
 fluid with `canister` gets a canister of that colour, and one with `gas_bottle` gets a gas tank with that bottle colour

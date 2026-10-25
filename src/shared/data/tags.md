@@ -13,7 +13,7 @@ contents change how HBM behaves. Folder names below are the 26.1 and 1.21.1 spel
 
 | Tag | What HBM does with it | HBM's members |
 |---|---|---|
-| `hbm:pump_ground` | Ground a groundwater pump (steam or electric) draws from. The pump checks the 3×3 area below it, four blocks deep; it works when at least half of those blocks are in this tag. | grass block, dirt, sand, mycelium, dead dirt, oily dirt, dirty sand, dirty red sand, waste earth |
+| `hbm:pump_ground` | Ground a groundwater pump (steam or electric) draws from. The pump checks the 3×3 area below it, `groundDepth` blocks deep (4 by default, in [machine settings](../../reference/machine-settings/)); the top layer must be solid, and it works when at least half of those blocks are in this tag. | grass block, dirt, sand, mycelium, dead dirt, oily dirt, dirty sand, dirty red sand, waste earth |
 | `hbm:fleija_immune` | Blocks the F.L.E.I.J.A. blast does not remove. | none |
 | `hbm:meteorite_replaceable` | Non-replaceable blocks a meteorite in safe mode may still overwrite. | meteorite blocks and meteor ores |
 | `hbm:fbi_breakable` | Blocks the FBI agents break through during a raid. | wooden doors and trapdoors, iron door, chests, and several HBM machines and crates |
@@ -55,6 +55,7 @@ nothing of HBM's is lost as long as `replace` is `false`.
 | `hbm:red_flowers` | Red flowers for an armor mod recipe. |
 | `hbm:music_discs` | Music discs for a crafting recipe. |
 | `hbm:melee_kit_swords` | HBM's melee kit swords; nested into `minecraft:swords`. |
+| `hbm:certus_quartz_clusters` | Certus quartz clusters for the centrifuge and crystallizer rows. HBM's member: `ae2:quartz_cluster` (optional). |
 
 HBM also ships `hbm:zirnox_rods`, `hbm:zirnox_depleted_rods` (items), `hbm:uranium_ores` (blocks) and `hbm:bosses`
 (entity types) for other mods to use. HBM's own code does not read them.
@@ -95,8 +96,9 @@ On every other node (both 26.1 nodes, both 1.21.1 nodes and 1.20.1 Fabric) only 
 | Tag | Use |
 |---|---|
 | `hbm:has_structure/<structure>` | The biomes a structure may generate in (`hbm:has_structure/bunker`, `hbm:has_structure/oil_rig`, ...). Each also holds `#hbm:biome_dictionary/...` tags, so modded biomes of the right 1.7 type are candidates too. |
-| `hbm:biome_dictionary/<type>` | Which 1.7 Forge biome type a biome is: `overworld`, `ocean`, `beach`, `plains`, `river`, `sandy`, `sparse`, `swamp`. Each is built from the matching `c:` and `minecraft:` biome tags. |
+| `hbm:biome_dictionary/<type>` | Which 1.7 Forge biome type a biome is: `overworld`, `ocean`, `beach`, `plains`, `river`, `sandy`, `sparse`, `swamp`, `snowy`. Each is built from the matching `c:` and `minecraft:` biome tags. |
 | `hbm:has_feature/foxglove`, `hbm:has_feature/nightshade` | Where the foxglove and nightshade flowers generate. |
+| `hbm:has_feature/bedrock_deposits` | Biomes outside `#minecraft:is_overworld` that still get bedrock ore and bedrock oil. HBM's members are the TerraFirmaCraft biomes (optional). A biome in `#minecraft:is_overworld` already gets both and is skipped here. |
 
 The biome dictionary tags let HBM treat modded biomes the way 1.7 did. Ocean and plains biomes also get HBM's
 plastic bag and pigeon spawns. A modded biome that already sits in the right `c:` biome tags is picked up without any

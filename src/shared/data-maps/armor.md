@@ -28,6 +28,18 @@ for a set are 1.7's set value split by slot: helmet 0.2, chestplate 0.4, legging
 
 Example: a full set with a total of 2.0 lets through 1% of radiation.
 
+The config file `config/hbmConfig/hbmRadResist.json` (1.7's) sits above this map: an item it names takes that value
+instead, and `0` there removes the item's resistance. Without the file the game writes `_hbmRadResist.json` with every
+value as a template; remove the underscore to use it. It is read once at start-up.
+
+```json title="config/hbmConfig/hbmRadResist.json"
+{
+  "entries": [
+    { "item": "hbm:hazmat_helmet", "resistance": 0.15 }
+  ]
+}
+```
+
 ## protection_classes
 
 `data/hbm/value_maps/item/protection_classes.json`. Registry: item. HBM ships 32 entries.

@@ -11,7 +11,7 @@ Tables for the arc welder, the soldering station and the ammo press.
 |---|---|---|---|---|
 | `hbm:arc_welder` | Arc Welder | own | first match in `order` | 42 |
 | `hbm:soldering` | Soldering Station | own | first match in `order` | 43 |
-| `hbm:ammo_press` | Ammo Press | own | player picks it; saves the recipe id | 89 |
+| `hbm:ammo_press` | Ammo Press | own | player picks it; saves the recipe id | 90 |
 
 All three accept the [Stirling engine ingredient](../common-fields/#stirling-engine) besides the normal
 [ingredient](../common-fields/#ingredients) forms, and take [item stacks](../common-fields/#item-stacks) (with

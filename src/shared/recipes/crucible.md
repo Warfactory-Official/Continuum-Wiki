@@ -10,7 +10,7 @@ The crucible's alloying table, and the table that says what any item melts into.
 | Type | Machines | Schema | Picked by | Rows in HBM |
 |---|---|---|---|---|
 | `hbm:crucible` | Crucible | own | selector, saves `name` | 13 |
-| `hbm:material_distribution` | Crucible, foundry, Electric Arc Furnace | own | item tags, then item row (below) | 43 |
+| `hbm:material_distribution` | Crucible, foundry, Electric Arc Furnace | own | item tags, then item row (below) | 54 |
 
 Both work in molten material, counted in quanta: 8 to the nugget, 72 to the ingot, 648 to the block. Materials are
 named by their HBM material name (`iron`, `steel`, `arsenic_bronze`, `flux`, `slag`, ...); see

@@ -188,6 +188,30 @@ methods.put("getCurrentPlanet", (stardar, args) -> new Object[] {Orbit.bodyOf(st
 ComputerComponents.register(TileEntityMachineStardar.class, "ntm_stardar", methods, SpaceMachinesD.MACHINE_STARDAR);
 ```
 
+## Interfaces in com.hbm.api
+
+HBM's machines, tools and entities find your content by these interfaces, as they find HBM's own. Implement them on your
+block, block entity, item or entity.
+
+| Interface | On | HBM uses it for |
+|---|---|---|
+| `block.IToolable` | block | `onScrew(level, player, pos, side, hit, hand, ToolType)`: a screwdriver, wrench, hand drill or other HBM tool used on it |
+| `block.IInsertable` | block | `insertItem(level, pos, dir, stack)`: the piston inserter pushes one item in |
+| `block.IPneumaticConnector` | block | `canConnectPneumatic(dir)`: pneumatic tubes connect on that side |
+| `block.ICrucibleAcceptor` | block | `canAcceptPartialPour`/`pour`, `canAcceptPartialFlow`/`flow`: molten metal from crucibles, channels and foundries; both return the leftover |
+| `block.IBlowable` | block | `applyFan(level, pos, direction, distance)`: the first obstruction in a fan's air stream |
+| `block.IRadarCommandReceiver` | block entity | `sendCommandPosition(x, y, z)`, `sendCommandEntity(target)`: fire missions from a radar or designator |
+| `block.BarrelSkin` | block | `barrelSkin()`: drawn by HBM's barrel renderer |
+| `tile.IHeatSource` | block entity | `getHeatStored()`, `useUpHeat(heat)`: heat (TU) that a consumer directly above (a crucible, another heater) drains |
+| `conveyor.IConveyorBelt` / `conveyor.IEnterableBlock` | block or block entity | items moving along a belt, and entering a block from one (`ConveyorLookup.at(type, level, pos)` finds either) |
+| `redstoneoverradio.IRORValueProvider` / `IRORInteractive` | block entity | values and functions for Redstone-over-Radio readers and controllers (`getFunctionInfo()`, `provideRORValue`, `runRORFunction`) |
+| `item.IDesignatorItem` | item | `isReady`, `getCoords`: a launch pad target |
+| `item.IGasMask` | helmet | a replaceable gas-mask filter and its hazard blacklist |
+| `item.IDepthRockTool` | item | `canBreakRock(...)`: may break depth rock |
+| `entity.IRadarDetectableNT` | entity | `getRadarName()`, `getBlipLevel()`: how a radar shows it |
+| `entity.IResistanceProvider` | entity | `getCurrentDTDR(...)`: dynamic damage threshold and resistance against HBM's damage |
+| `fluid.TooltipTrait` | fluid trait | `addInfo`, `addInfoHidden` (Shift): lines on the fluid's tooltip |
+
 ## Machines in hbmMachines.json
 
 ```java
@@ -198,3 +222,17 @@ public static void register(IConfigurableMachine machine)
 Adds your machine to HBM's `hbmMachines.json` config. Call before the config is read (it is read at common setup), for
 example from `declare()`. `IConfigurableMachine` has `getConfigName()`, `readIfPresent(JsonObject obj)` and
 `writeConfig(JsonWriter writer)`, plus static `grab(obj, name, default)` helpers.
+
+## World rules
+
+```java
+// dev.golem.core.world.WorldRules
+public static BoolRule bool(String name, boolean defaultValue)
+public static IntRule integer(String name, int defaultValue, int min, int max)
+public static DoubleRule decimal(String name, double defaultValue, double min, double max)
+```
+
+A rule is set with `/gamerule <name> <value>` (HBM's RBMK dials are these), saved with the world, clamped when read and
+synced to clients. Read it with `rule.get(level)`. Vanilla game rules hold no doubles and 26.1 names them by lower-case
+id, so use these for 1.7-style camelCase rules. Declare at mod construction on both sides, with a name your mod owns.
+

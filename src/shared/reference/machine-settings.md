@@ -18,7 +18,7 @@ false, `D[:` a list of decimals, `M:` a nested object. `INFO` keys are comments.
 
 ```json title="config/hbmConfig/hbmMachines.json (part)"
 {
-  "centrifuge": { "I:powerCap": 100000, "I:timeToProcess": 100, "I:consumption": 200 },
+  "centrifuge": { "I:powerCap": 100000, "I:timeToProcess": 200, "I:consumption": 200 },
   "waterpump": { "I:groundHeight": 70, "I:groundDepth": 4, "I:steamSpeed": 1000, "I:electricSpeed": 10000 }
 }
 ```

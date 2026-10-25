@@ -10,7 +10,7 @@ HBM's hazard blocks give off. The [overview](../overview/) explains the file for
 
 ## hazards
 
-`data/hbm/value_maps/item/hazards.json`. Registry: item. HBM ships 675 entries, 145 of them tags.
+`data/hbm/value_maps/item/hazards.json`. Registry: item. HBM ships 693 entries, 148 of them tags.
 
 The hazards an item carries in an inventory, on the ground or worn. These are 1.7's `HazardRegistry` values.
 

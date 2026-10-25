@@ -10,7 +10,7 @@ Tables for the fusion reactor and the machines it feeds.
 | Type | Machines | Schema | Picked by | Rows in HBM |
 |---|---|---|---|---|
 | `hbm:fusion` | Fusion Reactor Vessel | generic + `ignition_temp`, `output_temp`, `neutron_flux`, `red`, `green`, `blue` | selector, saves `name` | 10 |
-| `hbm:plasma_forge` | Plasma Forge | generic + `ignition_temp` | selector, saves `name` | 35 |
+| `hbm:plasma_forge` | Plasma Forge | generic + `ignition_temp` | selector, saves `name` | 45 |
 | `hbm:fluid_breeder` | Fusion Reactor Breeder (fluid mode) | [generic](../common-fields/#generic-schema) | first match in `order` | 3 |
 | `hbm:outgasser` | RBMK Irradiation Channel, Fusion Reactor Breeder (item mode) | generic + `fusion_only` | first match in `order` | 19 |
 
@@ -76,7 +76,7 @@ Notes:
   "output_items": ["hbm:dfc_core"],
   "duration": 12000,
   "power": 100000000,
-  "order": 30,
+  "order": 40,
   "ignition_temp": 50000000
 }
 ```

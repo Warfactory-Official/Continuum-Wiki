@@ -9,7 +9,7 @@ The chemical plant and mixer tables. Both use the generic schema, but the mixer 
 
 | Type | Machines | Schema | Picked by | Rows in HBM |
 |---|---|---|---|---|
-| `hbm:chemical_plant` | Chemical Plant, Chemical Factory | [generic](../common-fields/#generic-schema) | selector, saves `name` | 87 |
+| `hbm:chemical_plant` | Chemical Plant, Chemical Factory | [generic](../common-fields/#generic-schema) | selector, saves `name` | 90 |
 | `hbm:mixer` | Mixer | [generic](../common-fields/#generic-schema) | output fluid (identifier), then `order` | 50 |
 
 ## chemical_plant
@@ -30,7 +30,7 @@ order), and the machine saves its `name`.
   "duration": 100,
   "power": 100,
   "custom_localization": true,
-  "order": 36,
+  "order": 37,
   "requires": ["!lbsm_simple_chemistry"]
 }
 ```

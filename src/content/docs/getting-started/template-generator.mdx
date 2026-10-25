@@ -34,6 +34,9 @@ built:
 - Golem Core's shared build scripts in `gradle/golem/`, from the same Golem Core release;
 - the per-node versions (NeoForge, Fabric API, JEI and so on) of the NTM - Continuum release it builds against.
 
+It also holds the harness wrapper (`harness/harness`, `harness.json` with one entry per target) for scripted client
+checks; see [Testing](../../addons/testing/#scripted-client-checks).
+
 If you leave out a target, its buildscript, loader glue and metadata are left out too. The project is switched to the
 first target you picked (26.1 NeoForge when it is picked), and the source is written for that target.
 

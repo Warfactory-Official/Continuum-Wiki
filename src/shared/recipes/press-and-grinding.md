@@ -10,9 +10,9 @@ Tables for machines that press, grind, separate or saw one item at a time.
 | Type | Machines | Schema | Picked by | Rows in HBM |
 |---|---|---|---|---|
 | `hbm:press` | Burner Press, Electric Press, Conveyor Press | own | first match in `order` | 48 |
-| `hbm:shredder` | Shredder, Large Mining Drill, Mining Laser (shredder upgrade), shredder tool ability | own | input item; first recipe id wins | 330 |
-| `hbm:centrifuge` | Centrifuge, Mining Laser (centrifuge upgrade), centrifuge tool ability | own | first match in `order` | 160 |
-| `hbm:crystallizer` | Ore Acidizer, Mining Laser (crystallizer upgrade), crane partitioner, crystallizer tool ability | own | tank fluid, then item rows before tag rows | 332 |
+| `hbm:shredder` | Shredder, Large Mining Drill, Mining Laser (shredder upgrade), shredder tool ability | own | input item; first recipe id wins | 333 |
+| `hbm:centrifuge` | Centrifuge, Mining Laser (centrifuge upgrade), centrifuge tool ability | own | first match in `order` | 180 |
+| `hbm:crystallizer` | Ore Acidizer, Mining Laser (crystallizer upgrade), crane partitioner, crystallizer tool ability | own | tank fluid, then item rows before tag rows | 347 |
 | `hbm:sawmill` | Sawmill | own | first match in `order` | 5 |
 | `hbm:rock_mill` | Rock Mill | [generic](../common-fields/#generic-schema) | selector, saves `name` | 11 |
 
@@ -80,7 +80,9 @@ An output is one of:
 
 - an item output, `"id"` or `{"id", "count"}`;
 - `{"tag": "c:gems/certus_quartz", "count": 2}`: the first item of the tag (written without `#`);
-- `{"scraps": {"material": "copper", "amount": 72}}`: a scrap item holding that much molten material.
+- `{"scraps": {"material": "copper", "amount": 72}}`: a scrap item holding that much molten material;
+- `{"item": <item output>, "chance": 0.6666667}`: an item output made only when a roll against `chance` (0 to 1)
+  succeeds, once per operation. HBM's raw ore rows use it for their 2/3 yield.
 
 A row whose tag output has no item is left out.
 
@@ -93,7 +95,7 @@ A row whose tag output has no item is left out.
     { "tag": "c:gems/certus_quartz", "count": 2 }
   ],
   "requires": ["#c:gems/certus_quartz"],
-  "order": 132
+  "order": 151
 }
 ```
 
@@ -114,8 +116,8 @@ The Ore Acidizer. The fluid in the machine's tank chooses among rows with the sa
 | `requires` | item tag id, **one string, no `#`** | no | none | The row counts only while this tag has an item. |
 | `order` | int | no | after HBM's | See lookup below. |
 
-`output` is an item output (`"id"` or `{"id", "count"}`), `{"tag", "count"}` (first item of the tag) or
-`{"scraps": {"material", "amount"}}`, as for the centrifuge.
+`output` is an item output (`"id"` or `{"id", "count"}`), `{"tag", "count"}` (first item of the tag),
+`{"scraps": {"material", "amount"}}` or `{"item", "chance"}`, as for the centrifuge.
 
 ```json title="data/hbm/recipe/crystallizer/tag_ores_certus_quartz_peroxide.json (HBM)"
 {
@@ -125,7 +127,7 @@ The Ore Acidizer. The fluid in the machine's tank chooses among rows with the sa
   "output": { "tag": "c:gems/certus_quartz", "count": 12 },
   "duration": 600,
   "requires": "c:gems/certus_quartz",
-  "order": 328
+  "order": 342
 }
 ```
 
@@ -137,7 +139,7 @@ The Ore Acidizer. The fluid in the machine's tank chooses among rows with the sa
   "output": { "scraps": { "material": "copper", "amount": 72 } },
   "duration": 300,
   "productivity": 0.1,
-  "order": 22
+  "order": 36
 }
 ```
 
@@ -182,10 +184,7 @@ selector order), and the mill saves its `name`; `power` × 100 sizes its energy 
 output tank. HBM's rows crush cobblestone, gravel, sand, netherrack, soul sand and several HBM stones into weighted
 mixes of gravel, sand and powders, with two plain rows for clay and colloid.
 
-There are no generated files for this table in the build this page was written from. The row below is HBM's
-`rock.cobble`, written out by hand from its Java source in the generic schema:
-
-```json title="data/hbm/recipe/rock_mill/cobble.json (HBM, written out from source)"
+```json title="data/hbm/recipe/rock_mill/cobble.json (HBM)"
 {
   "type": "hbm:rock_mill",
   "name": "rock.cobble",
