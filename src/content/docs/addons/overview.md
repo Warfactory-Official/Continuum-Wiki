@@ -7,8 +7,8 @@ sidebar:
 ---
 
 An addon mod is a mod that adds to or changes NTM - Continuum (mod id `hbm`). The reference addon is
-**NTM: Space** (mod id `ntmspace`, source in `new-hbm-space`). A second, dev-only addon, `ntmprobe`
-(`new-hbm-space/src/probe`), exists to prove that two addons work side by side. Every API in this section is used by one
+**NTM: Space** (mod id `ntmspace`, source in [NTM-Continuum-Space](https://github.com/Warfactory-Official/NTM-Continuum-Space)). A second, dev-only addon, `ntmprobe`
+(`NTM-Continuum-Space/src/probe`), exists to prove that two addons work side by side. Every API in this section is used by one
 of them, and the examples are shortened from their code.
 
 ## The rule

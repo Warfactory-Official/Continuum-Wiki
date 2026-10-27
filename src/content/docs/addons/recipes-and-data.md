@@ -269,7 +269,7 @@ public final class SpaceRemovals extends RemovalSource {
 
 For fluid properties, write a `DataSource` with HBM's `FluidProperties.write/read` (and `writePatch/readPatch` for
 `fluid_property_patch`). Item pools use HBM's `ItemPool.PoolFile`. NTM: Space's sources are in
-`new-hbm-space/src/recipes/java/com/ntmspace/recipes/data/`.
+`NTM-Continuum-Space/src/recipes/java/com/ntmspace/recipes/data/`.
 
 A loot function of your own, for loot tables you write or generate, is registered with
 `dev.golem.core.world.LootFunctions.register(ns, name, codec)` at mod construction; the codec's type implements
@@ -303,7 +303,7 @@ files carry that table's `"type"` but live in your namespace.
 The rows are generated on 26.1 NeoForge only, in a headless GameTest server (26.1 binds item components only on a started
 server, never in a data run). Golem Core's `DataGenerator` writes every row once the server has started, then halts it.
 
-Copy the `if (project.name == "26.1-neoforge")` block at the end of `new-hbm-space/build.neoforge.gradle.kts`. It:
+Copy the `if (project.name == "26.1-neoforge")` block at the end of `NTM-Continuum-Space/build.neoforge.gradle.kts`. It:
 
 1. creates a `recipes` source set over `src/recipes/java`, compiled against the main classes;
 2. registers a mod group `<modId>Recipes` for it and a `generateData` run of type `gameTestServer` with:

@@ -1,7 +1,7 @@
 """Writes src/shared/reference/config.md from NTM - Continuum's source: every hbm.cfg key, every hbmServer.json key
 and every RBMK gamerule, with defaults and the descriptions the mod writes into the files.
 
-    python scripts/gen-config-reference.py ../new-hbm
+    python scripts/gen-config-reference.py ../NTM-Continuum
 """
 import json
 import pathlib
