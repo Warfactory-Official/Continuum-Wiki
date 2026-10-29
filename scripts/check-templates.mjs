@@ -12,7 +12,7 @@ if (!outDir) throw new Error('usage: node scripts/check-templates.mjs <out dir> 
 const defaults = {
 	addon: {
 		modId: 'exampleaddon', modName: 'Example Addon', package: 'com.example.exampleaddon', className: classNameFor('Example Addon'),
-		author: 'You', version: '0.1.0', license: 'LGPL-3.0', description: '', nodes: NODES.map((n) => n.id), example: true,
+		author: 'You', version: '0.1.0', license: 'LGPL-3.0-only', description: '', nodes: NODES.map((n) => n.id), example: true,
 	},
 	datapack: { namespace: 'mypack', packName: 'My HBM tweaks', description: '', versions: ['26.1', '1.21.1', '1.20.1'], example: true },
 };

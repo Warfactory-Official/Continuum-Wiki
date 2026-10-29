@@ -18,6 +18,20 @@ export const DATAPACK_VERSIONS = [
 	{ id: '1.20.1', format: 15, label: '1.20.1' },
 ];
 const NEW_FORMAT = 82;
+
+// The license dropdown: SPDX ids, which Fabric, Modrinth and CurseForge read. All Rights Reserved has none.
+export const LICENSES = [
+	{ id: 'LGPL-3.0-only', label: 'GNU LGPL 3.0' },
+	{ id: 'GPL-3.0-only', label: 'GNU GPL 3.0' },
+	{ id: 'MIT', label: 'MIT' },
+	{ id: 'Apache-2.0', label: 'Apache 2.0' },
+	{ id: 'MPL-2.0', label: 'Mozilla Public License 2.0' },
+	{ id: 'AGPL-3.0-only', label: 'GNU AGPL 3.0' },
+	{ id: 'BSD-3-Clause', label: 'BSD 3-Clause' },
+	{ id: 'CC0-1.0', label: 'CC0 1.0 (public domain)' },
+	{ id: 'PolyForm-Shield-1.0.0', label: 'PolyForm Shield 1.0.0' },
+	{ id: 'All Rights Reserved', label: 'All Rights Reserved' },
+];
 const JAVA_OF = { '26.1': 25, '1.21.1': 21, '1.20.1': 17 };
 const OVERLAY_DIR = 'overlay_1_21';
 
@@ -61,7 +75,7 @@ export function validate(kind, s) {
 	text('modName', 'Mod name');
 	text('author', 'Author');
 	text('description', 'Description', false);
-	text('license', 'License');
+	if (!LICENSES.some((l) => l.id === s.license)) err.license = 'Pick a license.';
 	if (!/^[0-9][0-9A-Za-z.+-]*$/.test(s.version ?? '')) err.version = 'Start with a digit, for example 0.1.0.';
 	if (s.homepage && !/^https?:\/\/[^\s"'\\$]+$/.test(s.homepage)) err.homepage = 'A web address starting with https://.';
 	const segs = (s.package ?? '').split('.');

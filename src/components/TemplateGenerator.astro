@@ -1,7 +1,7 @@
 ---
 // The datapack and addon template form. The templates and the CurseForge file ids come from
 // public/generator/manifest.json (scripts/templates.mjs); src/generator/generate.js fills and zips them in the browser.
-import { DATAPACK_VERSIONS, NODES } from '../generator/generate.js';
+import { DATAPACK_VERSIONS, LICENSES, NODES } from '../generator/generate.js';
 
 const manifestUrl = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/generator/manifest.json`;
 ---
@@ -32,8 +32,9 @@ const manifestUrl = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/generator/ma
 		<label>Main class <input name="className" value="MyAddon" required spellcheck="false" /></label>
 		<label>Author <input name="author" value="" required /></label>
 		<label>Version <input name="version" value="0.1.0" required spellcheck="false" /></label>
-		<label>License <input name="license" value="LGPL-3.0" required list="tg-licenses" spellcheck="false" />
-			<datalist id="tg-licenses"><option value="LGPL-3.0" /><option value="GPL-3.0" /><option value="MIT" /><option value="Apache-2.0" /><option value="All Rights Reserved" /></datalist></label>
+		<label>License <select name="license">
+			{LICENSES.map((l) => <option value={l.id} selected={l.id === 'LGPL-3.0-only'}>{l.label}</option>)}
+		</select></label>
 		<label>Description <input name="description" placeholder="An addon for NTM - Continuum." /></label>
 		<label>Homepage <input name="homepage" placeholder="https://github.com/you/myaddon" spellcheck="false" />
 			<small>Optional. Linked from the mod list; a GitHub repository also gives the issues link.</small></label>
@@ -67,7 +68,7 @@ const manifestUrl = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/generator/ma
 
 	function settings(form: HTMLFormElement) {
 		const s: Record<string, any> = {};
-		for (const el of form.querySelectorAll<HTMLInputElement>('input[name]')) {
+		for (const el of form.querySelectorAll<HTMLInputElement>('input[name], select[name]')) {
 			if (el.type === 'checkbox' && el.name !== 'example') (s[el.name] ??= []).push(...(el.checked ? [el.value] : []));
 			else if (el.type === 'checkbox') s[el.name] = el.checked;
 			else s[el.name] = el.value.trim();
@@ -222,7 +223,7 @@ const manifestUrl = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/generator/ma
 		padding-inline: 0.25rem;
 	}
 	.tg input:not([type]),
-	.tg input[list] {
+	.tg select {
 		font: inherit;
 		font-size: var(--sl-text-base);
 		color: var(--sl-color-white);
@@ -232,7 +233,8 @@ const manifestUrl = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/generator/ma
 		padding: 0.375rem 0.5rem;
 		min-width: 0;
 	}
-	.tg input:focus-visible {
+	.tg input:focus-visible,
+	.tg select:focus-visible {
 		outline: 2px solid var(--sl-color-accent);
 		outline-offset: 1px;
 	}
